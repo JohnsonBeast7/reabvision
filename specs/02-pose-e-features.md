@@ -102,3 +102,11 @@ Matriz `(T_fixo, n_ângulos)` da repetição reamostrada para `T_fixo = 64` quad
 - Testes unitários de ângulo passam com tolerância de 1°.
 - Rodar MediaPipe e YOLO-pose sobre o mesmo vídeo próprio gera dois `DataFrame` de ângulos com as mesmas colunas.
 - Gráfico de FEA-05 existe no relatório.
+
+## Limitações conhecidas
+
+Observadas nos testes com webcam (calibração de 24/11/2026):
+
+- **Profundidade (eixo z) é pouco confiável.** O MediaPipe estima a profundidade a partir de uma imagem 2D; com o quadril perto da borda do quadro, o tronco parado aparecia ~25° "inclinado". Por isso a inclinação do tronco (`trunk_tilt`) é calculada só no plano da imagem (x, y).
+- **Cotovelo dobrado na elevação lateral não é detectado de frente.** Com a câmera frontal, o antebraço dobrado aponta para a câmera e a flexão fica na profundidade: o ângulo medido continua ~150°, igual ao braço esticado. A regra do cotovelo só detecta dobras visíveis no plano da imagem. Na elevação frontal (câmera de lado) a dobra é detectada. Possível melhoria: comparar o comprimento do antebraço com o do braço na imagem (antebraço "encolhe" quando aponta para a câmera).
+- **Dobras leves de cotovelo** (até ~10° abaixo do braço esticado) ficam dentro da variação normal da medição e não são sinalizadas.
