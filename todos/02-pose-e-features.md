@@ -4,6 +4,7 @@ Spec: [02-pose-e-features.md](../specs/02-pose-e-features.md)
 
 ## Estimadores de pose
 
+- [ ] Estudar YOLO-pose (Ultralytics): instalação, saída de 17 pontos, FPS em CPU (D5)
 - [ ] Interface `PoseEstimator` e dataclass `PoseResult` (POS-01)
 - [ ] Implementação MediaPipe usando `pose_world_landmarks`, `model_complexity` configurável (POS-01)
 - [ ] Implementação YOLO-pose (modelo nano) atrás da mesma interface (POS-02)

@@ -13,7 +13,6 @@ Tarefas derivadas das [specs](../specs/README.md). Um arquivo por spec, com a me
 
 | # | Arquivo | Spec |
 |---|---|---|
-| 00 | [Organização](00-organizacao.md) | [00](../specs/00-visao-geral.md) |
 | 01 | [Dados](01-dados.md) | [01](../specs/01-dados.md) |
 | 02 | [Pose e atributos](02-pose-e-features.md) | [02](../specs/02-pose-e-features.md) |
 | 03 | [Contagem de repetições](03-contagem-repeticoes.md) | [03](../specs/03-contagem-repeticoes.md) |
@@ -29,7 +28,7 @@ Tarefas derivadas das [specs](../specs/README.md). Um arquivo por spec, com a me
 
 | Semanas | Fase | Arquivos principais |
 |---|---|---|
-| 1 | Pesquisa e estudo, organização | 00, 08 (esqueleto), 09 (termos) |
+| 1 | Pesquisa e estudo | 02 (estudo do YOLO), 08 (esqueleto), 09 (termos) |
 | 2–3 | Preparação dos dados | 01, 02 |
 | 3–4 | Gravação dos vídeos próprios | 07 (gravação), 01 (anotação) |
 | 4–6 | Contagem e treinamento dos modelos | 03, 04 |
