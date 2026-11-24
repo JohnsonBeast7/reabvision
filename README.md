@@ -1,0 +1,79 @@
+# Monitoramento Inteligente de Exercícios de Reabilitação Física por Visão Computacional
+
+Sistema que, pela webcam de um computador comum, acompanha exercícios de fisioterapia domiciliar: **conta as repetições** e indica **em tempo real se cada repetição foi executada corretamente**.
+
+> **Aviso:** esta ferramenta é um projeto acadêmico. Ela **não faz diagnóstico nem prescreve exercícios** e não substitui o fisioterapeuta. É um apoio à prática orientada por um profissional. Interrompa o exercício se sentir dor.
+
+## Como funciona
+
+```
+Webcam ──► Estimativa de pose ──► Ângulos articulares ──┬──► Contagem de repetições
+           (MediaPipe ou YOLO-pose)                     │
+                                                        └──► Classificador (Random Forest / LSTM)
+                                                                  │ correta × incorreta
+                                                                  ▼
+                                                     Interface Streamlit com feedback ao vivo
+```
+
+1. **Estimativa de pose:** um modelo pré-treinado (MediaPipe BlazePose, com YOLO-pose como alternativa) encontra as articulações do corpo em cada quadro.
+2. **Atributos:** as articulações viram ângulos (joelho, quadril, ombro, cotovelo, tronco), que não dependem da distância nem da posição da pessoa na imagem.
+3. **Contagem:** detecção de picos e vales no ângulo principal de cada exercício, sem treino.
+4. **Classificação:** cada repetição é classificada como correta ou incorreta. Comparamos Random Forest, LSTM e uma alternativa leve.
+5. **Feedback:** a interface mostra o contador, o veredito de cada repetição e dicas como "desça um pouco mais".
+
+### Exercícios
+
+| Exercício | Posição da câmera |
+|---|---|
+| Agachamento profundo | lateral |
+| Elevação lateral de braço | frontal |
+| Elevação frontal de braço | lateral |
+
+## Metas
+
+| Meta | Valor |
+|---|---|
+| F1 macro (correto × incorreto) em pessoas não vistas no treino | ≥ 0,80 |
+| Erro na contagem de repetições | ≤ 1 por série de 10 |
+| Desempenho em notebook sem GPU | ≥ 15 FPS |
+
+Além disso, o sistema é avaliado sob diferentes condições de iluminação, câmera, distância, ângulo, fundo, roupa e oclusão.
+
+## Dados
+
+| Base | Uso no projeto |
+|---|---|
+| UI-PRMD (Vakanski et al., 2018) | Treino: esqueletos de Kinect com repetições corretas e incorretas |
+| KIMORE (Capecci et al., 2019) | Treino e avaliação com pacientes reais; vídeos RGB para comparar Kinect × câmera comum |
+| REHAB24-6 (Černek; Sedmidubský; Budíková, 2024) | Teste externo com vídeos RGB e rótulo por repetição (CC BY-NC 4.0) |
+| Vídeos gravados pelo grupo | Teste em condições reais e testes de robustez |
+
+Os dados brutos **não** são versionados neste repositório. Cada base deve ser baixada da fonte original, respeitando seus termos de uso.
+
+## Tecnologias
+
+Python 3.11 · MediaPipe · Ultralytics YOLO · OpenCV · scikit-learn · PyTorch · Streamlit · pytest · GitHub Actions
+
+## Privacidade
+
+O vídeo da webcam é processado apenas localmente, quadro a quadro, e nunca é salvo nem enviado a servidores. Somente as coordenadas do esqueleto são usadas.
+
+## Documentação
+
+- [Pré-projeto](docs/pre-projeto/pre-projeto-grupo5.pdf)
+- [Especificações](specs/README.md)
+- [Tarefas](todos/README.md)
+
+## Grupo 5
+
+Alessandro da Rosa · Carlos M. · Estevan Stolfo · Felipe W. · João M. · Pedro Scheurer · Pedro Dagneze · João Pedro Ferraresi · Vinicius Amaral
+
+## Referências
+
+- CAPECCI, M. et al. The KIMORE dataset: KInematic assessment of MOvement and clinical scores for remote monitoring of physical REhabilitation. *IEEE TNSRE*, v. 27, n. 7, p. 1436-1448, 2019.
+- ČERNEK, A.; SEDMIDUBSKÝ, J.; BUDÍKOVÁ, P. REHAB24-6: Physical Therapy Dataset for Analyzing Pose Estimation Methods. *SISAP*, 2024.
+- VAKANSKI, A. et al. A data set of human body movements for physical rehabilitation exercises. *Data*, v. 3, n. 1, p. 2, 2018.
+- BAZAREVSKY, V. et al. BlazePose: on-device real-time body pose tracking. arXiv:2006.10204, 2020.
+- LIAO, Y.; VAKANSKI, A.; XIAN, M. A deep learning framework for assessing physical rehabilitation exercises. *IEEE TNSRE*, v. 28, n. 2, p. 468-477, 2020.
+
+Lista completa no [pré-projeto](docs/pre-projeto/pre-projeto-grupo5.pdf).
