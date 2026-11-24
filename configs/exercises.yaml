@@ -46,7 +46,7 @@ lateral_raise:
   name: Elevação lateral de braço
   camera_view: frontal
   camera: De frente, na altura do peito
-  distance: Cerca de 2,5 m, com o corpo inteiro na imagem
+  distance: Cerca de 2,5 m, da cabeça até o meio das coxas, com espaço para os braços abertos
   movement: Eleve os braços pelas laterais até a altura dos ombros, com os cotovelos estendidos
   primary_angles: [shoulder_l, shoulder_r]
   direction: up
@@ -85,7 +85,7 @@ front_raise:
   name: Elevação frontal de braço
   camera_view: lateral
   camera: De lado, na altura do peito
-  distance: Cerca de 2,5 m, com o corpo inteiro na imagem
+  distance: Cerca de 2,5 m, da cabeça até o meio das coxas, com espaço para os braços abertos
   movement: Eleve os braços pela frente até a altura dos ombros, com os cotovelos estendidos
   primary_angles: [shoulder_l, shoulder_r]
   direction: up
