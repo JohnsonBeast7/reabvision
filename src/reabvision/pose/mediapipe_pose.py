@@ -42,6 +42,8 @@ class MediaPipePose:
 
         rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
         image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+        if self._landmarker is None:
+            raise RuntimeError("estimador já foi fechado")
         result = self._landmarker.detect_for_video(image, timestamp_ms)
         if not result.pose_landmarks:
             return None
@@ -62,4 +64,7 @@ class MediaPipePose:
         )
 
     def close(self) -> None:
-        self._landmarker.close()
+        # Idempotente: fechar duas vezes o landmarker nativo derruba o processo (segfault).
+        landmarker, self._landmarker = self._landmarker, None
+        if landmarker is not None:
+            landmarker.close()

@@ -7,6 +7,12 @@ toolbarMode = "minimal"
 address = "localhost"
 headless = true
 
+[runner]
+# Espera a execução anterior parar antes de rodar de novo. Com fastReruns, clicar em
+# "Trocar exercício" durante a série fechava o estimador de pose enquanto a execução
+# antiga ainda o usava, derrubando o processo (segfault no MediaPipe).
+fastReruns = false
+
 [browser]
 # Não envia estatísticas de uso ao Streamlit.
 gatherUsageStats = false

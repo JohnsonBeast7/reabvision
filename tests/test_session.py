@@ -125,3 +125,37 @@ def test_posture_gate_blocks_counting():
     states = [session.process(frame, i / FPS) for i in range(len(series))]
     assert session.counter.count == 0
     assert states[-1].message == MSG_POSTURE
+
+
+def test_close_waits_for_frame_in_progress():
+    import threading
+    import time
+
+    class SlowEstimator(FakeEstimator):
+        closed_while_busy = False
+
+        def __init__(self):
+            super().__init__([175.0] * 10)
+            self.busy = False
+            self.started = threading.Event()
+
+        def process(self, frame, timestamp_ms=None):
+            self.busy = True
+            self.started.set()
+            time.sleep(0.2)
+            self.busy = False
+            return super().process(frame, timestamp_ms)
+
+        def close(self):
+            SlowEstimator.closed_while_busy = self.busy
+
+    est = SlowEstimator()
+    session = ExerciseSession(load_exercises()["squat"], est)
+    frame = np.zeros((10, 10, 3), np.uint8)
+    worker = threading.Thread(target=session.process, args=(frame, 0.0))
+    worker.start()
+    est.started.wait()
+    session.close()  # chamado de outra thread no meio do quadro
+    worker.join()
+    assert not SlowEstimator.closed_while_busy
+    session.close()  # segunda chamada não faz nada

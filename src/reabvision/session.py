@@ -7,6 +7,7 @@ só as coordenadas/ângulos do quadro atual e da repetição em andamento (ETI-0
 from __future__ import annotations
 
 import math
+import threading
 import time
 from collections import Counter, deque
 from dataclasses import dataclass, field
@@ -84,10 +85,20 @@ class ExerciseSession:
         self._frame_times: deque[float] = deque(maxlen=30)
         self._t0: float | None = None
         self.logger = logger
+        # Impede fechar o estimador enquanto um quadro está sendo processado
+        # (o Streamlit pode rodar a página de novo em outra thread).
+        self._lock = threading.Lock()
+        self._closed = False
 
     # ------------------------------------------------------------------ quadro a quadro
     def process(self, frame_bgr: np.ndarray, t: float | None = None) -> FrameState:
         """Processa um quadro. t em segundos (opcional; padrão: relógio)."""
+        with self._lock:
+            if self._closed:
+                raise RuntimeError("sessão encerrada")
+            return self._process(frame_bgr, t)
+
+    def _process(self, frame_bgr: np.ndarray, t: float | None) -> FrameState:
         now = time.perf_counter()
         if t is None:
             self._t0 = self._t0 if self._t0 is not None else now
@@ -242,6 +253,10 @@ class ExerciseSession:
         )
 
     def close(self) -> None:
-        self.estimator.close()
-        if self.logger is not None:
-            self.logger.close()
+        with self._lock:
+            if self._closed:
+                return
+            self._closed = True
+            self.estimator.close()
+            if self.logger is not None:
+                self.logger.close()
