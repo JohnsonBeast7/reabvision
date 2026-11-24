@@ -27,6 +27,7 @@ from reabvision.skeleton import J
 
 MSG_NO_BODY = "Corpo não detectado: afaste-se e enquadre o corpo inteiro"
 MSG_LOW_VIS = "Articulações pouco visíveis: ajuste a posição da câmera ou a iluminação"
+MSG_POSTURE = "Fique em pé, com o tronco reto, para começar"
 
 
 @dataclass
@@ -103,9 +104,13 @@ class ExerciseSession:
         else:
             row = self._angles_for(pose)
             angle = primary_angle(pd.DataFrame([row]), list(self.cfg.primary_angles))[0]
+            tilt = row.get("trunk_tilt", math.nan)
             if math.isnan(angle):
                 angle = None
                 message = MSG_LOW_VIS
+            elif self.cfg.max_trunk_tilt is not None and tilt > self.cfg.max_trunk_tilt:
+                angle = None
+                message = MSG_POSTURE
             else:
                 self._buffer.append((t, row))
         self._trim_buffer(t)

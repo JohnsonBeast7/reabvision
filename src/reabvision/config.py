@@ -40,6 +40,9 @@ class ExerciseConfig:
     max_rep_duration: float
     max_gap: float
     rules: tuple[Rule, ...] = field(default_factory=tuple)
+    max_trunk_tilt: float | None = None
+    """Acima desta inclinação do tronco a pessoa não está na postura do exercício
+    (ex.: curvada indo até o computador) e o quadro não conta. None = sem limite."""
 
     def __post_init__(self):
         if self.direction not in ("up", "down"):
@@ -84,5 +87,6 @@ def load_exercises(path: Path | None = None) -> dict[str, ExerciseConfig]:
             max_rep_duration=float(cfg["max_rep_duration"]),
             max_gap=float(cfg["max_gap"]),
             rules=rules,
+            max_trunk_tilt=cfg.get("max_trunk_tilt"),
         )
     return out

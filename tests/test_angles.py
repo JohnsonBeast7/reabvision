@@ -91,3 +91,17 @@ def test_primary_angle_ignores_nan():
 def test_rejects_wrong_shape():
     with pytest.raises(ValueError):
         compute_angles(np.zeros((10, 3)))
+
+
+def test_trunk_tilt_ignores_depth():
+    p = standing_pose()
+    p[J["l_shoulder"], 2] = 0.5  # ombros "para trás" só na profundidade
+    p[J["r_shoulder"], 2] = 0.5
+    assert compute_angles(p).iloc[0]["trunk_tilt"] == pytest.approx(0, abs=1)
+
+
+def test_trunk_tilt_sideways_lean():
+    p = standing_pose()
+    p[J["l_shoulder"], 0] += 0.5  # tronco inclinado 45° para o lado (ombros 0.5 m acima)
+    p[J["r_shoulder"], 0] += 0.5
+    assert compute_angles(p).iloc[0]["trunk_tilt"] == pytest.approx(45, abs=1)

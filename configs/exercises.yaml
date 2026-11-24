@@ -39,7 +39,7 @@ squat:
       message: Mantenha o tronco mais ereto
     - features: [duration]
       op: "<"
-      value: 1.2
+      value: 0.8
       message: Faça o movimento mais devagar
 
 lateral_raise:
@@ -51,11 +51,12 @@ lateral_raise:
   primary_angles: [shoulder_l, shoulder_r]
   direction: up
   rest_threshold: 35
-  active_threshold: 70
-  min_amplitude: 35
-  min_rep_duration: 0.8
+  active_threshold: 45
+  min_amplitude: 25
+  min_rep_duration: 0.5
   max_rep_duration: 10
   max_gap: 0.5
+  max_trunk_tilt: 40
   rules:
     - features: [shoulder_l_max, shoulder_r_max]
       agg: mean
@@ -66,18 +67,18 @@ lateral_raise:
       op: ">"
       value: 20
       message: Eleve os dois braços igualmente
-    - features: [elbow_l_min, elbow_r_min]
+    - features: [elbow_l_mean, elbow_r_mean]
       agg: mean
       op: "<"
-      value: 140
-      message: Mantenha os cotovelos estendidos
+      value: 125
+      message: Mantenha os cotovelos estendidos  # de frente só detecta dobras no plano da imagem (spec 02, limitações)
     - features: [trunk_tilt_max]
       op: ">"
-      value: 20
+      value: 10
       message: Evite inclinar o tronco
     - features: [duration]
       op: "<"
-      value: 1.2
+      value: 0.8
       message: Faça o movimento mais devagar
 
 front_raise:
@@ -89,21 +90,22 @@ front_raise:
   primary_angles: [shoulder_l, shoulder_r]
   direction: up
   rest_threshold: 35
-  active_threshold: 70
-  min_amplitude: 35
-  min_rep_duration: 0.8
+  active_threshold: 45
+  min_amplitude: 25
+  min_rep_duration: 0.5
   max_rep_duration: 10
   max_gap: 0.5
+  max_trunk_tilt: 40
   rules:
     - features: [shoulder_l_max, shoulder_r_max]
       agg: max
       op: "<"
       value: 80
       message: Eleve mais os braços, até a altura dos ombros
-    - features: [elbow_l_min, elbow_r_min]
+    - features: [elbow_l_mean, elbow_r_mean]
       agg: max
       op: "<"
-      value: 140
+      value: 135
       message: Mantenha os cotovelos estendidos
     - features: [trunk_tilt_max]
       op: ">"
@@ -111,5 +113,5 @@ front_raise:
       message: Evite inclinar o tronco para trás
     - features: [duration]
       op: "<"
-      value: 1.2
+      value: 0.8
       message: Faça o movimento mais devagar

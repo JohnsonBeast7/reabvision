@@ -111,3 +111,17 @@ def test_classifier_is_used_when_given():
     assert len(counted) == 2
     assert all(r.correct is False and r.source == "fake-rf" for r in counted)
     assert counted[0].confidence == 0.8
+
+
+def test_posture_gate_blocks_counting():
+    from dataclasses import replace
+
+    from reabvision.session import MSG_POSTURE
+
+    cfg = replace(load_exercises()["squat"], max_trunk_tilt=-1.0)  # todo quadro "curvado"
+    series = knee_series(2, bottom=85)
+    session = ExerciseSession(cfg, FakeEstimator(series), smoothing_alpha=1.0)
+    frame = np.zeros((10, 10, 3), np.uint8)
+    states = [session.process(frame, i / FPS) for i in range(len(series))]
+    assert session.counter.count == 0
+    assert states[-1].message == MSG_POSTURE

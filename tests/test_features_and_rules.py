@@ -69,3 +69,10 @@ def test_rule_features_must_exist():
     for cfg in load_exercises().values():
         for rule in cfg.rules:
             assert set(rule.features) <= known, (cfg.key, rule.features)
+
+
+def test_arm_raises_have_posture_gate():
+    cfgs = load_exercises()
+    assert cfgs["squat"].max_trunk_tilt is None
+    assert cfgs["lateral_raise"].max_trunk_tilt == 40
+    assert cfgs["front_raise"].max_trunk_tilt == 40

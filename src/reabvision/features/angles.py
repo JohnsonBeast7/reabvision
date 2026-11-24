@@ -62,12 +62,16 @@ def angle_between(a: np.ndarray, b: np.ndarray, c: np.ndarray) -> np.ndarray:
 def trunk_tilt(joints: np.ndarray) -> np.ndarray:
     """Inclinação do tronco em relação ao eixo vertical da câmera, em graus (0 = ereto).
 
+    Calculada só no plano da imagem (x, y): a profundidade estimada pelo MediaPipe é
+    ruidosa (quadril perto da borda da imagem gerava ~25° de "inclinação" em pé).
+    De frente a câmera vê a inclinação lateral; de lado, a inclinação para frente/trás.
+
     Usa o valor absoluto do cosseno, então funciona tanto com y para cima (Kinect)
     quanto com y para baixo (imagem, MediaPipe).
     """
     mid_hip = (joints[:, J["l_hip"]] + joints[:, J["r_hip"]]) / 2
     mid_shoulder = (joints[:, J["l_shoulder"]] + joints[:, J["r_shoulder"]]) / 2
-    v = mid_shoulder - mid_hip
+    v = (mid_shoulder - mid_hip)[:, :2]
     with np.errstate(invalid="ignore", divide="ignore"):
         cos = np.abs(v[:, 1]) / np.linalg.norm(v, axis=-1)
     return np.degrees(np.arccos(np.clip(cos, -1.0, 1.0)))
