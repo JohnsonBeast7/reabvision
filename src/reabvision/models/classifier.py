@@ -75,5 +75,7 @@ def load_classifier(exercise: str, kind: str) -> Classifier | None:
     if not path.exists():
         return None
     if kind == "lstm":
-        raise NotImplementedError("carregamento da LSTM ainda não implementado (MOD-03)")
+        from reabvision.models.lstm import LSTMClassifier
+
+        return LSTMClassifier.load(path)
     return SklearnClassifier.load(path)
