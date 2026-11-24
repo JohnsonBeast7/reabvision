@@ -62,13 +62,15 @@ O ponto central do desenho: **dados de treino (Kinect) e dados de uso (webcam) p
 
 | ID | Decisão | Status | Motivo |
 |---|---|---|---|
-| D1 | Exercícios: **agachamento profundo**, **elevação lateral de braço** (abdução de ombro) e **elevação frontal de braço** (flexão de ombro) | Tomada — confirmar mapeamento após inspecionar os dados | O pré-projeto cita "elevação lateral de braço" e "abdução de ombro", que são o mesmo movimento; fica o nome "elevação lateral", mais fácil para o usuário. Trocar um deles pela elevação frontal dá 3 movimentos distintos, todos presentes nos datasets (UI-PRMD m01/m07/m10 e KIMORE Es5/Es1). |
+| D1 | Exercícios: **agachamento profundo**, **elevação lateral de braço** (abdução de ombro) e **elevação frontal de braço** (flexão de ombro) | Tomada. Mapeamento conferido nos dados: m01/Es5 e m07 batem; para a elevação frontal não há equivalente exato (ver nota abaixo) | O pré-projeto cita "elevação lateral de braço" e "abdução de ombro", que são o mesmo movimento; fica o nome "elevação lateral", mais fácil para o usuário. Trocar um deles pela elevação frontal dá 3 movimentos distintos, todos presentes nos datasets (UI-PRMD m01/m07/m10 e KIMORE Es5/Es1). |
 | D2 | App roda localmente (Streamlit + OpenCV). Hugging Face Spaces vira opcional | Tomada | Pedido de simplicidade; webcam em Spaces exige WebRTC e é frágil para demo ao vivo. |
 | D3 | Usuário escolhe o exercício na interface | Tomada | Reconhecimento automático do exercício não está nos objetivos e acrescenta um modelo a mais. Fica como PODE. |
 | D4 | Random Forest é o modelo padrão do app; LSTM entra se superar o RF na avaliação | Tomada | Pré-projeto já previa o RF como garantia de entrega; professor reforçou. |
 | D5 | MediaPipe é o estimador padrão; YOLO-pose é avaliado como alternativa | Tomada | Sugestão do professor. Ambos expõem as 12 articulações do subconjunto comum. |
 | D6 | Ângulos calculados em 3D (world landmarks) quando o estimador oferecer, 2D caso contrário | Proposta — validar em [07](07-testes-robustez.md) | 3D aproxima mais do Kinect; YOLO-pose só dá 2D. |
-| D7 | Rótulo binário do KIMORE por limiar na pontuação clínica do exercício | Proposta — definir limiar em [01](01-dados.md) | KIMORE não tem rótulo correto/incorreto, só pontuação. |
+| D7 | Rótulo binário do KIMORE por limiar na pontuação clínica do exercício | Limiar provisório 40/50 em `data/kimore.py`; confirmar pela distribuição das notas | KIMORE não tem rótulo correto/incorreto, só pontuação. |
+
+**Nota sobre D1 (elevação frontal):** nenhum dataset tem exatamente o nosso movimento (braços pela frente até a altura dos ombros, ~90–110° medidos). O UI-PRMD m10 (escapção) sobe só até ~68° nas repetições corretas e o KIMORE Es1 eleva os braços acima da cabeça (~160°). O modelo da elevação frontal é treinado com os dois, então seu veredito é menos confiável que o dos outros exercícios; as regras de feedback (calibradas com webcam) seguem como referência principal para esse exercício.
 
 ## Glossário
 

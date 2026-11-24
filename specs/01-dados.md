@@ -8,6 +8,7 @@
 - Captura com Vicon e Kinect. **Usamos o Kinect** (mais próximo de uma câmera comum).
 - Papel: **fonte principal de treino** de correto × incorreto (tem rótulo explícito).
 - Exercícios usados (D1): m01 agachamento profundo, m07 "standing shoulder abduction" (= elevação lateral de braço), m10 escapção/elevação de ombro em pé (mais próximo da elevação frontal — confirmar).
+- Download: o site oficial (webpages.uidaho.edu/ui-prmd) saiu do ar em 2025. Os arquivos originais estão no Internet Archive: `Segmented Movements.zip` (corretas) e `Incorrect Segmented Movements.zip` (incorretas), ~200 MB cada, em `http://web.archive.org/web/2025id_/https://webpages.uidaho.edu/ui-prmd/<arquivo>`. Licença CC BY 4.0; citar Vakanski et al. (2018).
 
 ### KIMORE (Capecci et al., 2019)
 
@@ -16,8 +17,8 @@
 - Exercícios usados (D1): Es5 agachamento, Es1 elevação de braços.
 - Rótulo binário (D7): repetição/série é "correta" se a pontuação clínica do exercício ≥ limiar. O limiar DEVE ser definido olhando a distribuição das pontuações (sugestão inicial: mediana dos participantes saudáveis menos 1 desvio-padrão) e registrado em `configs/`.
 - Grupo do participante (saudável × paciente) é guardado como metadado para análise de viés ([05](05-avaliacao.md)).
-- O KIMORE também traz **vídeo RGB** (além de profundidade e esqueleto) do Kinect v2. Rodando MediaPipe/YOLO sobre esse RGB, temos o **mesmo movimento** visto pelo esqueleto do Kinect e pelo estimador de câmera comum — medida direta da diferença Kinect × webcam ([05](05-avaliacao.md), cenário E).
-- Download: página oficial (vrai.dii.univpm.it). Se o arquivo completo falhar, baixar as 4 subpastas separadamente.
+- Download: a página oficial (vrai.dii.univpm.it) e o link do SharePoint da universidade estão fora do ar (nov/2026). Usamos uma cópia dos arquivos originais publicada no Google Drive por terceiros (pasta `1b1anGzSytePiCUyoz8AlGMV2G54e_ZeC`), com a mesma estrutura `CG|GPP/<grupo>/<sujeito>/Es<n>/{Raw,Label}`. Baixamos só Es1 e Es5: `Raw/JointPosition*.csv`, `Raw/TimeStamp*.csv` e `Label/*.xlsx`.
+- Essa cópia **não tem o vídeo RGB** (só profundidade), então a comparação Kinect × webcam no mesmo movimento (antigo cenário E) foi removida ([05](05-avaliacao.md)).
 
 ### REHAB24-6 (Černek, Sedmidubský, Budíková — SISAP 2024)
 
@@ -57,7 +58,7 @@
 | DAT-08 | Relatório exploratório (notebook) com contagem de amostras por exercício, rótulo, participante e grupo | DEVE |
 | DAT-09 | Reamostragem temporal para uma taxa comum (30 Hz) | DEVE |
 | DAT-10 | Loader de REHAB24-6: roda o estimador de pose sobre os vídeos RGB e converte para o formato canônico com rótulo por repetição | DEVE |
-| DAT-11 | Extração de pose (MediaPipe e YOLO) sobre o vídeo RGB do KIMORE, pareada com o esqueleto Kinect da mesma gravação | DEVE |
+| DAT-11 | ~~Extração de pose sobre o vídeo RGB do KIMORE~~ — removido: a cópia acessível não tem RGB | — |
 
 ## Formato canônico
 
@@ -66,7 +67,7 @@ Uma sequência = uma série de um participante em um exercício.
 ```python
 @dataclass
 class Sequence:
-    dataset: str            # "uiprmd" | "kimore" | "kimore_rgb" | "rehab24" | "own"
+    dataset: str            # "uiprmd" | "kimore" | "rehab24" | "own"
     subject_id: str         # único por dataset, ex.: "uiprmd_s03"
     exercise: str           # "squat" | "lateral_raise" | "front_raise"
     joints: np.ndarray      # (T, 12, 3) em metros ou coords normalizadas; NaN se ausente

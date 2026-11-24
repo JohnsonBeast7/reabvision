@@ -10,5 +10,6 @@ Spec: [03-contagem-repeticoes.md](../specs/03-contagem-repeticoes.md)
 - [x] Teste de concordância entre contador online e offline
 - [ ] Segmentar séries do KIMORE em repetições com o segmentador offline
 - [ ] Ajustar limiares com vídeos de 2 integrantes (REP-05)
+- [x] Calibração inicial dos limiares com testes reais na webcam (1 pessoa, 3 exercícios) — log de depuração em `REABVISION_DEBUG_DIR`
 - [ ] Script de erro absoluto médio da contagem nos vídeos dos demais integrantes (REP-04)
 - [ ] Verificar META-02 (≤ 1 rep de erro por série de 10)

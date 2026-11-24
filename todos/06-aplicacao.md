@@ -36,6 +36,6 @@ Spec: [06-aplicacao.md](../specs/06-aplicacao.md)
 
 ## Validação
 
-- [ ] Medir FPS do app com MediaPipe (≥ 15) em notebook sem GPU
-- [ ] Teste manual: 10 agachamentos → contador 10 ± 1
+- [x] Medir FPS do app com MediaPipe (≥ 15) em notebook sem GPU — 30 FPS na webcam
+- [x] Teste manual: 10 agachamentos → contador 10 ± 1 — 10/10, e 10/10 e 9/9 nas elevações
 - [ ] Atualizar instruções de posicionamento com os resultados da robustez (ROB-05)
