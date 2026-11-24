@@ -6,7 +6,6 @@ Spec: [07-testes-robustez.md](../specs/07-testes-robustez.md)
 
 - [ ] Criar `configs/conditions.yaml` com a matriz de condições e a fonte de cada uma (ROB-01)
 - [ ] Mandar ao grupo o plano de gravação (27 vídeos, 5 pessoas) e definir quem é A, B, C, D e E
-- [ ] Confirmar termos de consentimento assinados antes de gravar (ETI-04)
 
 ## Gravação própria (3 exercícios por condição, séries de 10 com ~3 reps incorretas anotadas)
 

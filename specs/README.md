@@ -19,7 +19,7 @@ Cada spec descreve **o que** deve ser construído e **como saber que está pront
 | 06 | [Aplicação](06-aplicacao.md) | App Streamlit local com webcam e feedback |
 | 07 | [Testes de robustez](07-testes-robustez.md) | Iluminação, câmera, distância, ângulo, fundo, oclusão |
 | 08 | [Infra e execução local](08-infra-execucao-local.md) | Estrutura do repo, ambiente, testes automatizados, CI |
-| 09 | [Ética e privacidade](09-etica-privacidade.md) | LGPD, consentimento, avisos, viés |
+| 09 | [Ética e privacidade](09-etica-privacidade.md) | LGPD, privacidade, avisos, viés |
 
 ## Ordem sugerida de implementação
 

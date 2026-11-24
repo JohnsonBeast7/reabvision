@@ -2,8 +2,6 @@
 
 Spec: [09-etica-privacidade.md](../specs/09-etica-privacidade.md)
 
-- [ ] Redigir termo de consentimento em `docs/termo-consentimento.md` (ETI-04)
-- [ ] Coletar assinatura de todos que vão gravar, antes da primeira gravação (ETI-04)
 - [ ] Criar pasta compartilhada restrita ao grupo para os vídeos (fora do git) (ETI-05)
 - [x] Aviso de uso no app e no README (ETI-02)
 - [ ] Citar UI-PRMD e KIMORE no README e no relatório; não redistribuir dados brutos (ETI-03)

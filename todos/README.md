@@ -28,7 +28,7 @@ Tarefas derivadas das [specs](../specs/README.md). Um arquivo por spec, com a me
 
 | Semanas | Fase | Arquivos principais |
 |---|---|---|
-| 1 | Pesquisa e estudo | 02 (estudo do YOLO), 08 (esqueleto), 09 (termos) |
+| 1 | Pesquisa e estudo | 02 (estudo do YOLO), 08 (esqueleto) |
 | 2–3 | Preparação dos dados | 01, 02 |
 | 3–4 | Gravação dos vídeos próprios | 07 (gravação), 01 (anotação) |
 | 4–6 | Contagem e treinamento dos modelos | 03, 04 |
@@ -43,4 +43,3 @@ Tarefas derivadas das [specs](../specs/README.md). Um arquivo por spec, com a me
 - `03`, `04` dependem de `02` (ângulos).
 - `05` depende de `04` e dos vídeos gravados em `07`.
 - `06` depende de `02`, `03` e de pelo menos um modelo de `04`.
-- Gravação (`07`) depende dos termos assinados (`09`).

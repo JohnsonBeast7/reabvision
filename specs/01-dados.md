@@ -42,7 +42,7 @@
 - Papel: **somente teste** em condições reais (nunca usados no treino) e base dos testes de robustez ([07](07-testes-robustez.md)).
 - Continuam necessários mesmo com REHAB24-6 e o RGB do KIMORE: só eles têm **condições de captura controladas** (mesma pessoa, variando luz, câmera, distância), a elevação frontal e o ambiente real da demonstração.
 - Cada vídeo tem anotação manual: exercício, número real de repetições, rótulo de cada repetição (correta/incorreta e tipo de erro), condição de gravação.
-- Consentimento e descarte: ver [09](09-etica-privacidade.md).
+- Guarda e descarte: ver [09](09-etica-privacidade.md).
 
 ## Requisitos
 
