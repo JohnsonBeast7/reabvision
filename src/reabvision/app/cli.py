@@ -14,6 +14,7 @@ import cv2
 
 from reabvision.app.draw import GREEN, RED, YELLOW, draw_skeleton, put_text
 from reabvision.config import EXERCISES, load_exercises
+from reabvision.debug_log import logger_from_env
 from reabvision.models.classifier import load_classifier
 from reabvision.pose import ESTIMATORS, make_estimator
 from reabvision.session import ExerciseSession
@@ -41,7 +42,12 @@ def main() -> None:
     mirror = is_cam and not args.no_mirror
 
     def new_session() -> ExerciseSession:
-        return ExerciseSession(cfg, make_estimator(args.estimator), classifier)
+        return ExerciseSession(
+            cfg,
+            make_estimator(args.estimator),
+            classifier,
+            logger=logger_from_env(cfg.key, args.estimator),
+        )
 
     session = new_session()
     fps_samples: list[float] = []

@@ -18,6 +18,7 @@ import streamlit as st
 from reabvision.app.cameras import list_cameras
 from reabvision.app.draw import draw_skeleton
 from reabvision.config import EXERCISES, load_exercises
+from reabvision.debug_log import logger_from_env
 from reabvision.models.classifier import MODEL_KINDS, available_models, load_classifier
 from reabvision.pose import ESTIMATORS, make_estimator
 from reabvision.session import ExerciseSession
@@ -334,7 +335,12 @@ if "session" not in ss or source == "Arquivo de vídeo":
     reset_session()
     with frame_box, st.spinner("Preparando a câmera e o modelo…"):
         classifier = None if model_kind == "regras" else load_classifier(cfg.key, model_kind)
-        ss.session = ExerciseSession(cfg, make_estimator(estimator_name), classifier)
+        ss.session = ExerciseSession(
+            cfg,
+            make_estimator(estimator_name),
+            classifier,
+            logger=logger_from_env(cfg.key, estimator_name),
+        )
     ss.config_key = config_key
 session: ExerciseSession = ss.session
 

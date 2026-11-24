@@ -16,6 +16,7 @@ import pandas as pd
 
 from reabvision.config import ExerciseConfig
 from reabvision.counting.counter import RepCounter, RepEvent
+from reabvision.debug_log import SessionLogger
 from reabvision.features.angles import ANGLE_COLUMNS, ANGLE_TRIPLETS, compute_angles, primary_angle
 from reabvision.features.repetition import rep_features
 from reabvision.feedback import INCOMPLETE_MESSAGES, evaluate_rules
@@ -69,6 +70,7 @@ class ExerciseSession:
         classifier: Classifier | None = None,
         smoothing_alpha: float = 0.5,
         min_visibility: float = 0.5,
+        logger: SessionLogger | None = None,
     ):
         self.cfg = cfg
         self.estimator = estimator
@@ -80,6 +82,7 @@ class ExerciseSession:
         self._buffer: deque[tuple[float, dict[str, float]]] = deque()
         self._frame_times: deque[float] = deque(maxlen=30)
         self._t0: float | None = None
+        self.logger = logger
 
     # ------------------------------------------------------------------ quadro a quadro
     def process(self, frame_bgr: np.ndarray, t: float | None = None) -> FrameState:
@@ -93,6 +96,7 @@ class ExerciseSession:
         pose = self.estimator.process(frame_bgr, int(t * 1000))
         angle = None
         message = None
+        row = None
         if pose is None:
             message = MSG_NO_BODY
             self.smoother.reset()
@@ -108,6 +112,12 @@ class ExerciseSession:
 
         event = self.counter.update(angle, t)
         new_rep = self._close_rep(event) if event is not None else None
+        if self.logger is not None:
+            self.logger.frame(
+                t, angle, self.counter.count, self.counter.state.value, self.fps, message, row
+            )
+            if event is not None:
+                self._log_rep(event, new_rep)
 
         return FrameState(
             pose=pose,
@@ -179,6 +189,34 @@ class ExerciseSession:
         self.reps.append(result)
         return result
 
+    def _log_rep(self, event: RepEvent, rep: RepResult) -> None:
+        keys = (
+            "duration",
+            "knee_l_min",
+            "knee_r_min",
+            "shoulder_l_max",
+            "shoulder_r_max",
+            "elbow_l_min",
+            "elbow_r_min",
+            "trunk_tilt_max",
+            "asym_knee",
+            "asym_shoulder",
+        )
+        self.logger.rep(
+            {
+                "start_t": round(event.start_t, 2),
+                "end_t": round(event.end_t, 2),
+                "reason": event.reason,
+                "amplitude": round(event.amplitude, 1),
+                "extreme": round(event.extreme, 1),
+                "counted": rep.counted,
+                "index": rep.index,
+                "correct": rep.correct,
+                "hints": rep.hints,
+                **{k: round(rep.feats[k], 1) for k in keys if k in rep.feats},
+            }
+        )
+
     # ------------------------------------------------------------------ resumo
     @property
     def fps(self) -> float:
@@ -200,3 +238,5 @@ class ExerciseSession:
 
     def close(self) -> None:
         self.estimator.close()
+        if self.logger is not None:
+            self.logger.close()
