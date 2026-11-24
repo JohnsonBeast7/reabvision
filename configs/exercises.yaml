@@ -1,0 +1,115 @@
+# camera / distance / movement: instruções de posicionamento mostradas no app.
+#
+# Parâmetros por exercício: contagem de repetições (spec 03) e regras de feedback (spec 04).
+#
+# Contagem: máquina de estados com histerese sobre o ângulo principal.
+#   direction: down  -> o ângulo diminui durante o movimento (agachamento: joelho)
+#              up    -> o ângulo aumenta durante o movimento (elevações: ombro)
+#   rest_threshold:   além deste valor a pessoa saiu do repouso
+#   active_threshold: precisa chegar até aqui para a repetição valer
+#   min_amplitude:    diferença mínima (graus) entre repouso e ponto extremo
+#
+# Regras: cada regra compara um atributo da repetição (ver features/repetition.py)
+# com um limiar. "features" com mais de um item é agregado por "agg" (mean|min|max).
+# Os limiares são iniciais e DEVEM ser ajustados com os vídeos próprios (REP-05).
+
+squat:
+  name: Agachamento profundo
+  camera_view: lateral
+  camera: De lado, na altura do quadril
+  distance: Cerca de 2,5 m, com o corpo inteiro (da cabeça aos pés) na imagem
+  movement: Agache devagar e volte à posição em pé
+  primary_angles: [knee_l, knee_r]
+  direction: down
+  rest_threshold: 155
+  active_threshold: 120
+  min_amplitude: 35
+  min_rep_duration: 0.8
+  max_rep_duration: 10
+  max_gap: 0.5
+  rules:
+    - features: [knee_l_min, knee_r_min]
+      agg: mean
+      op: ">"
+      value: 100
+      message: Desça um pouco mais
+    - features: [trunk_tilt_max]
+      op: ">"
+      value: 50
+      message: Mantenha o tronco mais ereto
+    - features: [duration]
+      op: "<"
+      value: 1.2
+      message: Faça o movimento mais devagar
+
+lateral_raise:
+  name: Elevação lateral de braço
+  camera_view: frontal
+  camera: De frente, na altura do peito
+  distance: Cerca de 2,5 m, com o corpo inteiro na imagem
+  movement: Eleve os braços pelas laterais até a altura dos ombros, com os cotovelos estendidos
+  primary_angles: [shoulder_l, shoulder_r]
+  direction: up
+  rest_threshold: 35
+  active_threshold: 70
+  min_amplitude: 35
+  min_rep_duration: 0.8
+  max_rep_duration: 10
+  max_gap: 0.5
+  rules:
+    - features: [shoulder_l_max, shoulder_r_max]
+      agg: mean
+      op: "<"
+      value: 80
+      message: Eleve mais os braços, até a altura dos ombros
+    - features: [asym_shoulder]
+      op: ">"
+      value: 20
+      message: Eleve os dois braços igualmente
+    - features: [elbow_l_min, elbow_r_min]
+      agg: mean
+      op: "<"
+      value: 140
+      message: Mantenha os cotovelos estendidos
+    - features: [trunk_tilt_max]
+      op: ">"
+      value: 20
+      message: Evite inclinar o tronco
+    - features: [duration]
+      op: "<"
+      value: 1.2
+      message: Faça o movimento mais devagar
+
+front_raise:
+  name: Elevação frontal de braço
+  camera_view: lateral
+  camera: De lado, na altura do peito
+  distance: Cerca de 2,5 m, com o corpo inteiro na imagem
+  movement: Eleve os braços pela frente até a altura dos ombros, com os cotovelos estendidos
+  primary_angles: [shoulder_l, shoulder_r]
+  direction: up
+  rest_threshold: 35
+  active_threshold: 70
+  min_amplitude: 35
+  min_rep_duration: 0.8
+  max_rep_duration: 10
+  max_gap: 0.5
+  rules:
+    - features: [shoulder_l_max, shoulder_r_max]
+      agg: max
+      op: "<"
+      value: 80
+      message: Eleve mais os braços, até a altura dos ombros
+    - features: [elbow_l_min, elbow_r_min]
+      agg: max
+      op: "<"
+      value: 140
+      message: Mantenha os cotovelos estendidos
+    - features: [trunk_tilt_max]
+      op: ">"
+      value: 20
+      message: Evite inclinar o tronco para trás
+    - features: [duration]
+      op: "<"
+      value: 1.2
+      message: Faça o movimento mais devagar

@@ -54,6 +54,35 @@ Os dados brutos **não** são versionados neste repositório. Cada base deve ser
 
 Python 3.11 · MediaPipe · Ultralytics YOLO · OpenCV · scikit-learn · PyTorch · Streamlit · pytest · GitHub Actions
 
+O Ultralytics YOLO é distribuído sob a licença AGPL-3.0.
+
+## Como rodar
+
+Requer apenas um computador com webcam; não precisa de GPU nem de internet depois da instalação.
+
+1. Instale o [uv](https://docs.astral.sh/uv/getting-started/installation/) (ele baixa o Python 3.11 sozinho).
+2. Instale as dependências e baixe os modelos de pose pré-treinados:
+
+   ```bash
+   uv sync
+   uv run python -m reabvision.pose.download
+   ```
+
+3. Abra o app:
+
+   ```bash
+   uv run streamlit run src/reabvision/app/main.py
+   ```
+
+Alternativa sem Streamlit, em janela do OpenCV (teclas: `q` sai, `r` reinicia a série):
+
+```bash
+uv run python -m reabvision.app.cli --exercise squat
+uv run python -m reabvision.app.cli --exercise lateral_raise --estimator yolo --source video.mp4
+```
+
+Testes: `uv run pytest`.
+
 ## Privacidade
 
 O vídeo da webcam é processado apenas localmente, quadro a quadro, e nunca é salvo nem enviado a servidores. Somente as coordenadas do esqueleto são usadas.

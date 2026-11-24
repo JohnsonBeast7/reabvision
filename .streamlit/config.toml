@@ -1,0 +1,19 @@
+[client]
+# Esconde o botão "Deploy" e o menu de desenvolvedor do Streamlit.
+toolbarMode = "minimal"
+
+[server]
+# Só acessível neste computador; o vídeo não sai da máquina.
+address = "localhost"
+headless = true
+
+[browser]
+# Não envia estatísticas de uso ao Streamlit.
+gatherUsageStats = false
+
+[theme]
+base = "dark"
+primaryColor = "#3DBEA0"
+backgroundColor = "#0F1417"
+secondaryBackgroundColor = "#1A2126"
+textColor = "#E6ECEF"

@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Dados (nunca versionar dados brutos ou vídeos)
+/data/
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Pesos baixados de modelos pré-treinados
+models/pose/*
+!models/pose/.gitkeep
+
+# Ambiente
+.env
+.ipynb_checkpoints/
+.streamlit/secrets.toml
