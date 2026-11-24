@@ -21,7 +21,7 @@ class PoseResult:
 
 - 33 pontos por quadro, roda em CPU em tempo real. Não é treinado pelo grupo.
 - Usa `pose_world_landmarks` (metros, centrado no quadril) para os ângulos → `is_3d = True`.
-- `model_complexity` configurável (0/1/2); padrão 1. Medir FPS de cada um em [07](07-testes-robustez.md).
+- Variante do modelo configurável (`lite` / `full` / `heavy`, API Tasks do MediaPipe); padrão `full`. Medir FPS de cada uma em [07](07-testes-robustez.md).
 
 ### YOLO-pose (alternativa, sugestão do professor)
 

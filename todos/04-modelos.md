@@ -4,7 +4,7 @@ Spec: [04-modelos.md](../specs/04-modelos.md)
 
 ## Base comum
 
-- [ ] Interface `Classifier.predict_proba(rep) -> float` (MOD-05)
+- [x] Interface `Classifier.predict_proba(rep) -> float` (MOD-05)
 - [ ] Script `train.py --model <rf|lstm> --exercise <...>` salvando modelo + metadados em `models/<exercise>/` (MOD-01)
 - [ ] Sementes fixas e treino reprodutível (MOD-06)
 - [ ] Escolha do limiar de decisão na validação, nunca no teste (MOD-08)
@@ -30,7 +30,7 @@ Spec: [04-modelos.md](../specs/04-modelos.md)
 
 ## Feedback e inferência
 
-- [ ] Regras de feedback por exercício com limiares em `configs/exercises.yaml` (MOD-07)
+- [x] Regras de feedback por exercício com limiares em `configs/exercises.yaml` (MOD-07)
 - [ ] Medir tempo de inferência por repetição (< 50 ms em CPU) (MOD-09)
 - [ ] Treinar e salvar modelos finais dos 3 exercícios
 - [ ] Escolher modelo do app pelo F1 macro (empate < 0,02 → RF) e registrar justificativa (D4)

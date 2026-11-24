@@ -10,7 +10,7 @@ App simples, roda no notebook do apresentador, sem internet e sem GPU.
 
 ## Fluxo do usuário
 
-1. Abre o app (`streamlit run app/main.py`). Aparece o aviso de uso ([09](09-etica-privacidade.md)) e um botão "Entendi".
+1. Abre o app (`uv run streamlit run src/reabvision/app/main.py`). Aparece o aviso de uso ([09](09-etica-privacidade.md)) e um botão "Entendi".
 2. Escolhe o exercício (agachamento / elevação lateral de braço / elevação frontal de braço) e vê um texto curto + imagem de referência da posição da câmera (frontal ou lateral, distância recomendada).
 3. Clica em **Iniciar**. O vídeo aparece com o esqueleto desenhado.
 4. Durante a série, a tela mostra:
