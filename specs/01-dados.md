@@ -16,11 +16,30 @@
 - Exercícios usados (D1): Es5 agachamento, Es1 elevação de braços.
 - Rótulo binário (D7): repetição/série é "correta" se a pontuação clínica do exercício ≥ limiar. O limiar DEVE ser definido olhando a distribuição das pontuações (sugestão inicial: mediana dos participantes saudáveis menos 1 desvio-padrão) e registrado em `configs/`.
 - Grupo do participante (saudável × paciente) é guardado como metadado para análise de viés ([05](05-avaliacao.md)).
+- O KIMORE também traz **vídeo RGB** (além de profundidade e esqueleto) do Kinect v2. Rodando MediaPipe/YOLO sobre esse RGB, temos o **mesmo movimento** visto pelo esqueleto do Kinect e pelo estimador de câmera comum — medida direta da diferença Kinect × webcam ([05](05-avaliacao.md), cenário E).
+- Download: página oficial (vrai.dii.univpm.it). Se o arquivo completo falhar, baixar as 4 subpastas separadamente.
+
+### REHAB24-6 (Černek, Sedmidubský, Budíková — SISAP 2024)
+
+- 65 gravações de 10 adultos saudáveis, 30 FPS, **vídeo RGB de duas câmeras** (horizontal e vertical), sequências de esqueleto, segmentação por repetição e rótulo **correto/incorreto por repetição** (orientado por fisioterapeuta: ≥ 5 corretas e ≥ 5 incorretas por série). ~1.057 repetições após filtragem.
+- 6 exercícios: abdução de braço, "arm VW", flexão na mesa, abdução de perna, avanço e agachamento. **Dois coincidem com os nossos**: abdução de braço = `lateral_raise` e agachamento = `squat`. Não há equivalente da elevação frontal.
+- Papel: **teste externo com câmera RGB comum e pessoas de fora do grupo** (cenário F em [05](05-avaliacao.md)) e teste extra do contador (tem segmentação por repetição). Como roda MediaPipe/YOLO sobre o vídeo, é o conjunto mais parecido com o uso real.
+- Uso no treino PODE ser testado depois (com divisão por participante), mas só se o desempenho no cenário C ficar abaixo da meta — para manter o teste limpo.
+- Disponível no Zenodo (DOI 10.5281/zenodo.13305826), acesso aberto. Licença **CC BY-NC 4.0**: uso acadêmico não comercial permitido, citação obrigatória do artigo (Černek; Sedmidubský; Budíková. *REHAB24-6: Physical Therapy Dataset for Analyzing Pose Estimation Methods*. SISAP 2024). Compatível com o projeto.
+- Arquivos necessários: `videos.zip` (2,7 GB) e `Segmentation.csv`. Os demais (`2d/3d_joints`, `2d/3d_markers`, ~3 GB) PODEM ser baixados para comparar o esqueleto de referência com o MediaPipe/YOLO.
+
+### Bases consideradas e não adotadas
+
+| Base | Motivo |
+|---|---|
+| Fitness-AQA (Parmar et al., 2022) | Agachamento com barra em academia, gravação livre; movimento diferente do agachamento de reabilitação. Uso só não comercial. Pode servir de inspiração para tipos de erro do agachamento |
+| RepCount-A (TransRAC, CVPR 2022) | Vídeos variados com contagem anotada, mas sem rótulo de correção e com poucos exercícios iguais aos nossos. PODE complementar o teste do contador com os vídeos de agachamento |
 
 ### Vídeos próprios do grupo
 
 - ~10 vídeos por exercício, gravados pelos integrantes, com execuções corretas e incorretas.
 - Papel: **somente teste** em condições reais (nunca usados no treino) e base dos testes de robustez ([07](07-testes-robustez.md)).
+- Continuam necessários mesmo com REHAB24-6 e o RGB do KIMORE: só eles têm **condições de captura controladas** (mesma pessoa, variando luz, câmera, distância), a elevação frontal e o ambiente real da demonstração.
 - Cada vídeo tem anotação manual: exercício, número real de repetições, rótulo de cada repetição (correta/incorreta e tipo de erro), condição de gravação.
 - Consentimento e descarte: ver [09](09-etica-privacidade.md).
 
@@ -37,6 +56,8 @@
 | DAT-07 | Arquivo de anotação dos vídeos próprios (`data/own/annotations.csv`) com o esquema abaixo | DEVE |
 | DAT-08 | Relatório exploratório (notebook) com contagem de amostras por exercício, rótulo, participante e grupo | DEVE |
 | DAT-09 | Reamostragem temporal para uma taxa comum (30 Hz) | DEVE |
+| DAT-10 | Loader de REHAB24-6: roda o estimador de pose sobre os vídeos RGB e converte para o formato canônico com rótulo por repetição | DEVE |
+| DAT-11 | Extração de pose (MediaPipe e YOLO) sobre o vídeo RGB do KIMORE, pareada com o esqueleto Kinect da mesma gravação | DEVE |
 
 ## Formato canônico
 
@@ -45,7 +66,7 @@ Uma sequência = uma série de um participante em um exercício.
 ```python
 @dataclass
 class Sequence:
-    dataset: str            # "uiprmd" | "kimore" | "own"
+    dataset: str            # "uiprmd" | "kimore" | "kimore_rgb" | "rehab24" | "own"
     subject_id: str         # único por dataset, ex.: "uiprmd_s03"
     exercise: str           # "squat" | "lateral_raise" | "front_raise"
     joints: np.ndarray      # (T, 12, 3) em metros ou coords normalizadas; NaN se ausente
