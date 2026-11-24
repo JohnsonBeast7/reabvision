@@ -29,6 +29,24 @@ from reabvision.skeleton import J
 MSG_NO_BODY = "Corpo não detectado: afaste-se e enquadre o corpo inteiro"
 MSG_LOW_VIS = "Articulações pouco visíveis: ajuste a posição da câmera ou a iluminação"
 MSG_POSTURE = "Fique em pé, com o tronco reto, para começar"
+MSG_BODY_MOVING = "Não contou: mantenha o corpo parado, só os braços se movem"
+MSG_TOO_HIGH = "Não contou: eleve só até a altura dos ombros"
+
+
+def body_height(pose: PoseResult, min_visibility: float = 0.5) -> float:
+    """Altura dos ombros na imagem em unidades de "tamanho do tronco".
+
+    Variações grandes dentro de uma repetição indicam que o corpo inteiro subiu ou
+    desceu (pulo), e não só os braços. NaN se ombros/quadris pouco visíveis.
+    """
+    idx = [J[j] for j in ("l_shoulder", "r_shoulder", "l_hip", "r_hip")]
+    if min(pose.visibility[i] for i in idx) < min_visibility:
+        return math.nan
+    pts = pose.image_points
+    mid_sh = (pts[J["l_shoulder"]] + pts[J["r_shoulder"]]) / 2
+    mid_hip = (pts[J["l_hip"]] + pts[J["r_hip"]]) / 2
+    torso = float(np.linalg.norm(mid_sh - mid_hip))
+    return float(mid_sh[1] / torso) if torso > 1e-6 else math.nan
 
 
 @dataclass
@@ -155,6 +173,7 @@ class ExerciseSession:
         trunk = ("l_shoulder", "r_shoulder", "l_hip", "r_hip")
         if max(pose.visibility[J[j]] for j in trunk) < self.min_visibility:
             row["trunk_tilt"] = math.nan
+        row["body_y"] = body_height(pose, self.min_visibility)
         return row
 
     def _trim_buffer(self, t: float) -> None:
@@ -167,6 +186,8 @@ class ExerciseSession:
     def _close_rep(self, event: RepEvent) -> RepResult:
         rows = [row for (ts, row) in self._buffer if event.start_t <= ts <= event.end_t]
         if not event.counted or len(rows) < 3:
+            if event.counted:
+                self.counter.count -= 1
             result = RepResult(
                 index=0,
                 counted=False,
@@ -174,6 +195,15 @@ class ExerciseSession:
                 confidence=None,
                 source="",
                 hints=[INCOMPLETE_MESSAGES.get(event.reason, "Repetição não contada")],
+            )
+            self.reps.append(result)
+            return result
+
+        invalid = self._invalid_reason(event, rows)
+        if invalid is not None:
+            self.counter.count -= 1  # o contador já tinha contado
+            result = RepResult(
+                index=0, counted=False, correct=None, confidence=None, source="", hints=[invalid]
             )
             self.reps.append(result)
             return result
@@ -232,6 +262,24 @@ class ExerciseSession:
                 **{k: round(rep.feats[k], 1) for k in keys if k in rep.feats},
             }
         )
+
+    def _invalid_reason(self, event: RepEvent, rows: list[dict[str, float]]) -> str | None:
+        """Movimentos que passam no contador mas não são o exercício (pulo, polichinelo)."""
+        cfg = self.cfg
+        if cfg.max_extreme is not None:
+            beyond = (
+                event.extreme > cfg.max_extreme
+                if cfg.direction == "up"
+                else (event.extreme < cfg.max_extreme)
+            )
+            if beyond:
+                return MSG_TOO_HIGH
+        if cfg.max_body_bounce is not None:
+            ys = np.array([r.get("body_y", math.nan) for r in rows], dtype=float)
+            ys = ys[~np.isnan(ys)]
+            if ys.size >= 3 and ys.max() - ys.min() > cfg.max_body_bounce:
+                return MSG_BODY_MOVING
+        return None
 
     # ------------------------------------------------------------------ resumo
     @property

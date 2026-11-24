@@ -43,6 +43,12 @@ class ExerciseConfig:
     max_trunk_tilt: float | None = None
     """Acima desta inclinação do tronco a pessoa não está na postura do exercício
     (ex.: curvada indo até o computador) e o quadro não conta. None = sem limite."""
+    max_body_bounce: float | None = None
+    """Deslocamento vertical máximo dos ombros na imagem durante a repetição, em
+    proporção do tamanho do tronco. Acima disso (pulos, deslocamentos) não conta."""
+    max_extreme: float | None = None
+    """Ângulo principal máximo para a repetição contar (ex.: braços acima da cabeça
+    num polichinelo não contam como elevação até a altura dos ombros)."""
 
     def __post_init__(self):
         if self.direction not in ("up", "down"):
@@ -88,5 +94,7 @@ def load_exercises(path: Path | None = None) -> dict[str, ExerciseConfig]:
             max_gap=float(cfg["max_gap"]),
             rules=rules,
             max_trunk_tilt=cfg.get("max_trunk_tilt"),
+            max_body_bounce=cfg.get("max_body_bounce"),
+            max_extreme=cfg.get("max_extreme"),
         )
     return out

@@ -159,3 +159,42 @@ def test_close_waits_for_frame_in_progress():
     worker.join()
     assert not SlowEstimator.closed_while_busy
     session.close()  # segunda chamada não faz nada
+
+
+def _run_cfg(cfg, series):
+    session = ExerciseSession(cfg, FakeEstimator(series), smoothing_alpha=1.0)
+    frame = np.zeros((10, 10, 3), np.uint8)
+    for i in range(len(series)):
+        session.process(frame, i / FPS)
+    return session
+
+
+def test_body_bounce_invalidates_rep():
+    from dataclasses import replace
+
+    from reabvision.session import MSG_BODY_MOVING
+
+    # No agachamento falso os ombros descem na imagem: "corpo se movendo".
+    cfg = replace(load_exercises()["squat"], max_body_bounce=0.1)
+    session = _run_cfg(cfg, knee_series(3, bottom=85))
+    assert session.counter.count == 0
+    assert all(not r.counted and r.hints == [MSG_BODY_MOVING] for r in session.reps)
+
+
+def test_max_extreme_invalidates_rep():
+    from dataclasses import replace
+
+    from reabvision.session import MSG_TOO_HIGH
+
+    cfg = replace(load_exercises()["squat"], max_extreme=100.0)  # desceu além do permitido
+    session = _run_cfg(cfg, knee_series(2, bottom=85))
+    assert session.counter.count == 0
+    assert session.summary().not_counted == 2
+    assert session.reps[0].hints == [MSG_TOO_HIGH]
+
+
+def test_arm_raises_have_validity_limits():
+    cfgs = load_exercises()
+    for key in ("lateral_raise", "front_raise"):
+        assert cfgs[key].max_body_bounce == 0.2 and cfgs[key].max_extreme == 150
+    assert cfgs["squat"].max_body_bounce is None
