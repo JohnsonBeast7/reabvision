@@ -105,6 +105,8 @@ O vídeo da webcam é processado apenas localmente, quadro a quadro, e nunca é 
 
 ## Documentação
 
+- [Apresentação](docs/apresentacao.html): síntese de tecnologias, testes e resultados (abrir no navegador)
+- [Resultados da avaliação](reports/results.md)
 - [Pré-projeto](docs/pre-projeto/pre-projeto-grupo5.pdf)
 - [Especificações](specs/README.md)
 - [Tarefas](todos/README.md)
