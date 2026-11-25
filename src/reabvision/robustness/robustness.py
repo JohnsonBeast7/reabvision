@@ -222,16 +222,26 @@ def measure(item: VideoItem, estimator_name: str, degrade: Degrade | None) -> di
     }
 
 
-def run(items: list[VideoItem], estimators: list[str], synthetic: bool) -> pd.DataFrame:
+def run(
+    items: list[VideoItem],
+    estimators: list[str],
+    synthetic: bool,
+    conditions_filter: set[str] | None = None,
+    synthetic_estimators: set[str] | None = None,
+) -> pd.DataFrame:
     rows = []
     conditions: dict[str, Degrade | None] = {"base": None}
     if synthetic:
-        conditions |= SYNTHETIC
+        conditions |= {
+            k: v for k, v in SYNTHETIC.items() if not conditions_filter or k in conditions_filter
+        }
     total = len(items) * len(estimators) * len(conditions)
     done = 0
     for item in items:
         for est in estimators:
             for cond, fn in conditions.items():
+                if cond != "base" and synthetic_estimators and est not in synthetic_estimators:
+                    continue
                 done += 1
                 r = measure(item, est, fn)
                 r["degradacao"] = cond
@@ -313,13 +323,23 @@ def main() -> None:
     parser.add_argument("--videos", type=int, default=3, help="vídeos por exercício (rehab24)")
     parser.add_argument("--estimators", default="mediapipe,yolo")
     parser.add_argument("--no-synthetic", action="store_true")
+    parser.add_argument("--conditions", default="", help="degradações a usar (padrão: todas)")
+    parser.add_argument(
+        "--synthetic-estimators", default="", help="estimadores que rodam as degradações"
+    )
     parser.add_argument(
         "--only", default="", help="vídeos próprios a usar (ids separados por vírgula)"
     )
     args = parser.parse_args()
     only = set(filter(None, args.only.split(","))) or None
     items = list(rehab_items(args.videos) if args.source == "rehab24" else own_items(only=only))
-    df = run(items, args.estimators.split(","), synthetic=not args.no_synthetic)
+    df = run(
+        items,
+        args.estimators.split(","),
+        synthetic=not args.no_synthetic,
+        conditions_filter=set(filter(None, args.conditions.split(","))) or None,
+        synthetic_estimators=set(filter(None, args.synthetic_estimators.split(","))) or None,
+    )
     print("ok:", write_report(df, args.source))
 
 
