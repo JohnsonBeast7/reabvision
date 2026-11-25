@@ -5,16 +5,15 @@ Spec: [07-testes-robustez.md](../specs/07-testes-robustez.md)
 ## Preparação
 
 - [ ] Criar `configs/conditions.yaml` com a matriz de condições e a fonte de cada uma (ROB-01)
-- [ ] Mandar ao grupo o plano de gravação (27 vídeos, 5 pessoas) e definir quem é A, B, C, D e E
+- [x] Mandar ao grupo o plano de gravação
 
 ## Gravação própria (3 exercícios por condição, séries de 10 com ~3 reps incorretas anotadas)
 
-- [ ] C00 Base: pessoas A, B, C, D e E (15 vídeos)
-- [ ] C05 Celular como câmera: pessoa A (3 vídeos)
-- [ ] C08 Longe (~4 m): pessoa B (3 vídeos)
-- [ ] C14 Roupa larga: pessoa C (3 vídeos)
-- [ ] C15 Objeto cobrindo parte das pernas: pessoa D (3 vídeos)
-- [ ] Anotar cada vídeo em `annotations.csv` logo após gravar (DAT-07)
+- [x] Gravação encerrada com 9 vídeos de 4 pessoas (celular, C05; alguns com vista trocada, C10)
+- [x] C08 Longe: simulada por degradação sintética (sem vídeo próprio)
+- [ ] C14 Roupa larga: não gravada — registrar como limitação no relatório
+- [ ] C15 Oclusão: não gravada — registrar como limitação no relatório
+- [x] Anotar os vídeos em `annotations.csv` (feito por inspeção visual; revisar com quem gravou) (DAT-07)
 - [ ] Condições não cobertas (C02, C03, C06, C07, C12) **(PODE)** (ROB-03)
 
 ## Análise

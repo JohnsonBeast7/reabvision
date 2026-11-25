@@ -24,12 +24,12 @@ Para caber no prazo, **um fator por vez** a partir de uma condição base (não 
 | C05 | Câmera | Celular como webcam | Própria |
 | C06 | Câmera | Webcam externa USB diferente | Não coberta (PODE gravar) |
 | C07 | Distância | Perto (~1,5 m) | Não coberta (PODE gravar) |
-| C08 | Distância | Longe (~4 m) | Própria |
+| C08 | Distância | Longe (~4 m) | Sintética (pessoa reduzida no quadro) — sem vídeo próprio |
 | C09 | Ângulo | Câmera a 45° / vista trocada | REHAB24-6 (`cam17_orientation` e câmera 18) |
 | C12 | Fundo | Fundo poluído | Não coberta (PODE gravar) |
 | C13 | Fundo | Outra pessoa ao fundo | REHAB24-6 (`extra_person_in_cam17/18`) |
-| C14 | Roupa | Roupa larga (moletom, calça larga) | Própria |
-| C15 | Oclusão | Objeto (cadeira, mesa) cobrindo parte das pernas | Própria |
+| C14 | Roupa | Roupa larga (moletom, calça larga) | Não coberta (limitação) |
+| C15 | Oclusão | Objeto (cadeira, mesa) cobrindo parte das pernas | Não coberta (limitação) |
 | C18 | Qualidade | Ruído e desfoque de imagem | Sintética |
 
 Posição da câmera recomendada por exercício (registrar na condição base):
@@ -57,6 +57,10 @@ Cada vídeo: **uma pessoa, um exercício, 10 repetições** (~7 corretas e ~3 in
 - Nome do arquivo: `<exercicio>_<pessoa>_<condicao>.mp4`.
 - Os vídeos ficam fora do git, em pasta restrita ao grupo ([09](09-etica-privacidade.md)).
 
+### Situação final da gravação (24/11/2026)
+
+O grupo encerrou a gravação com **9 vídeos de 4 pessoas**, todos com celular apoiado (cobrem **C05**), alguns com vista trocada (**C10**). Não haverá vídeos de C08 (longe), C14 (roupa larga) nem C15 (oclusão): **C08 é simulada** pela degradação sintética "longe" (pessoa reduzida no quadro); **C14 e C15 ficam como limitação não testada** no relatório. O agachamento tem só 1 vídeo próprio; sua avaliação se apoia também no REHAB24-6 e no teste ao vivo de calibração.
+
 ## Métricas por condição
 
 | Métrica | Descrição |
@@ -78,7 +82,7 @@ Cada métrica é calculada para **MediaPipe e YOLO-pose** — é aqui que a suge
 | ROB-03 | Gravar as condições marcadas como não cobertas | PODE |
 | ROB-04 | Script `robustness.py` que roda os dois estimadores sobre os vídeos próprios, o REHAB24-6 (agrupado pelos metadados de condição) e as versões sintéticas, e gera tabela condição × métrica e gráfico de queda relativa à base | DEVE |
 | ROB-05 | Seção no relatório: quais condições mais degradam, recomendações de uso (ex.: "evite contraluz") que viram texto de instrução no app | DEVE |
-| ROB-06 | Degradação sintética: aplicar aos vídeos base escurecimento, redução de resolução, ruído e desfoque via OpenCV, em níveis crescentes, e medir as mesmas métricas | DEVE |
+| ROB-06 | Degradação sintética: aplicar aos vídeos base escurecimento, redução de resolução, ruído, desfoque e "longe" (pessoa reduzida no quadro) via OpenCV, em níveis crescentes, e medir as mesmas métricas | DEVE |
 
 ## Critérios de aceite
 
