@@ -9,7 +9,7 @@ Sistema que, pela webcam de um computador comum, acompanha exercícios de fisiot
 ```
 Webcam ──► Estimativa de pose ──► Ângulos articulares ──┬──► Contagem de repetições
            (MediaPipe ou YOLO-pose)                     │
-                                                        └──► Classificador (Random Forest / LSTM)
+                                                        └──► Avaliação (regras calibradas)
                                                                   │ correta × incorreta
                                                                   ▼
                                                      Interface Streamlit com feedback ao vivo
@@ -18,7 +18,7 @@ Webcam ──► Estimativa de pose ──► Ângulos articulares ──┬─�
 1. **Estimativa de pose:** um modelo pré-treinado (MediaPipe BlazePose, com YOLO-pose como alternativa) encontra as articulações do corpo em cada quadro.
 2. **Atributos:** as articulações viram ângulos (joelho, quadril, ombro, cotovelo, tronco), que não dependem da distância nem da posição da pessoa na imagem.
 3. **Contagem:** detecção de picos e vales no ângulo principal de cada exercício, sem treino.
-4. **Classificação:** cada repetição é classificada como correta ou incorreta. Comparamos Random Forest, LSTM e uma alternativa leve.
+4. **Classificação:** cada repetição é julgada como correta ou incorreta por regras sobre os ângulos, calibradas com testes em webcam. Também treinamos e comparamos Random Forest e LSTM com datasets públicos: eles vão bem com dados de Kinect, mas não generalizam para câmera comum, por isso o app usa as regras (resultados em [reports/results.md](reports/results.md)).
 5. **Feedback:** a interface mostra o contador, o veredito de cada repetição e dicas como "desça um pouco mais".
 
 ### Exercícios
@@ -82,6 +82,22 @@ uv run python -m reabvision.app.cli --exercise lateral_raise --estimator yolo --
 ```
 
 Testes: `uv run pytest`.
+
+### Reproduzir os experimentos
+
+Os dados não ficam no repositório. Para baixar, treinar e avaliar (tudo em CPU):
+
+```bash
+uv run python -m reabvision.data.download              # UI-PRMD, KIMORE e REHAB24-6 (~3,3 GB)
+uv run python -m reabvision.data.rehab24                # extrai a pose dos vídeos do REHAB24-6
+uv run python -m reabvision.models.train                # Random Forest e LSTM por exercício
+uv run python -m reabvision.models.evaluate             # gera reports/results.md
+uv run python -m reabvision.robustness.robustness       # gera reports/robustness_*.md
+```
+
+Vídeos próprios para avaliação vão em `data/own/videos/`, com as anotações em `data/own/annotations.csv` (formato em [specs/01-dados.md](specs/01-dados.md)).
+
+Para calibrar limiares, defina `REABVISION_DEBUG_DIR=<pasta>` ao rodar o app: ele grava um log numérico (ângulos, contagem, dicas) de cada série, sem imagens.
 
 ## Privacidade
 
