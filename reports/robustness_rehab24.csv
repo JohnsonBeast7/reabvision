@@ -1,0 +1,9 @@
+video,orientacao,luz,pessoa_extra,exercicio,estimador,deteccao,estabilidade,reps_reais,reps_contadas,erro_contagem,fps,degradacao
+PM_000_Camera17,front,apagada,True,lateral_raise,mediapipe,0.9946319018404908,0.8791553885278418,5,1,4,45.361881834778195,base
+PM_000_Camera18,side,apagada,False,lateral_raise,mediapipe,0.0,,5,0,5,47.11717357149176,base
+PM_001_Camera17,front,apagada,False,lateral_raise,mediapipe,0.993368700265252,0.3382825384920949,10,4,6,47.369391418632205,base
+PM_001_Camera18,side,apagada,False,lateral_raise,mediapipe,0.0,,10,0,10,46.818690312659875,base
+PM_008_Camera17,front,apagada,False,squat,mediapipe,1.0,0.22283544879960004,27,20,7,46.830501559422345,base
+PM_008_Camera18,side,apagada,False,squat,mediapipe,0.9982662300134849,0.2851040308885615,27,27,0,46.89083637646417,base
+PM_022_Camera17,front,apagada,True,squat,mediapipe,1.0,0.47382134285636823,22,22,0,47.20247554140049,base
+PM_022_Camera18,side,apagada,False,squat,mediapipe,1.0,0.6570156347583378,22,22,0,46.60812124793394,base

@@ -362,10 +362,30 @@ html { scroll-behavior: smooth; }
         <p class="eyebrow">Condições adversas</p>
         <h2>Robustez</h2>
       </div>
-      <div class="note">
-        <b>Em execução</b>
-        <p>Resultados das degradações sintéticas (escuro, resolução baixa, ruído, desfoque, pessoa longe) e das condições reais do REHAB24-6 (luz apagada, pessoa extra, ângulo da câmera) entram aqui.</p>
+      <p>Degradações aplicadas por software aos vídeos do grupo (um por exercício), com o app completo e o MediaPipe:</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Condição</th><th>Detecção da pose</th><th>Erro de contagem</th><th>Situação</th></tr></thead>
+          <tbody>
+            <tr><td>Vídeo original</td><td class="num">97%</td><td class="num">1,0</td><td><span class="chip ok">Base</span></td></tr>
+            <tr><td>Desfoque forte</td><td class="num">97%</td><td class="num">1,0</td><td><span class="chip ok">Robusto</span></td></tr>
+            <tr><td>Escuro (12% do brilho)</td><td class="num">94%</td><td class="num">0,7</td><td><span class="chip ok">Robusto</span></td></tr>
+            <tr><td>Resolução de 96 px de largura</td><td class="num">97%</td><td class="num">0,7</td><td><span class="chip ok">Robusto</span></td></tr>
+            <tr><td>Pessoa longe (25% do tamanho)</td><td class="num">94%</td><td class="num">0,7</td><td><span class="chip ok">Robusto</span></td></tr>
+            <tr><td>Ruído moderado</td><td class="num">85%</td><td class="num">2,3</td><td><span class="chip warn">Degrada</span></td></tr>
+            <tr><td>Ruído forte</td><td class="num">64%</td><td class="num">3,3</td><td><span class="chip down">Falha</span></td></tr>
+          </tbody>
+        </table>
       </div>
+      <div class="note">
+        <b>Recomendação de uso: boa iluminação</b>
+        <p>O ponto fraco é o ruído de imagem, a granulação que webcams baratas geram com pouca luz. Escuro, desfoque, baixa resolução e distância quase não afetam.</p>
+      </div>
+      <ul class="plain">
+        <li><strong>REHAB24-6, luz apagada:</strong> no agachamento o app contou 91 de 98 repetições (93%) em vídeos de pessoas de fora do grupo.</li>
+        <li><strong>Pessoa extra na cena:</strong> o MediaPipe segue a pessoa principal; detecção de 100% nos vídeos com outra pessoa aparecendo.</li>
+        <li><strong>Câmera girada:</strong> vídeos gravados com a imagem rotacionada 90° não são reconhecidos (0% de detecção). A câmera precisa ficar na vertical correta.</li>
+      </ul>
     </section>
 
     <section id="limites">
