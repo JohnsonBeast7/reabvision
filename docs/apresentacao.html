@@ -193,13 +193,11 @@ html { scroll-behavior: smooth; }
       <li><a href="#resumo">Resumo</a></li>
       <li><a href="#numeros">Em números</a></li>
       <li><a href="#funcionamento">Como funciona</a></li>
-      <li><a href="#tecnologias">Tecnologias</a></li>
-      <li><a href="#dados">Dados</a></li>
+      <li><a href="#stack">Tecnologias e dados</a></li>
       <li><a href="#testado">O que testamos e descartamos</a></li>
       <li><a href="#problemas">Problemas encontrados</a></li>
       <li><a href="#robustez">Robustez</a></li>
       <li><a href="#limites">Limitações</a></li>
-      <li><a href="#demo">Demonstração</a></li>
     </ol>
   </nav>
 
@@ -207,7 +205,7 @@ html { scroll-behavior: smooth; }
     <header class="intro" id="resumo">
       <p class="eyebrow">Grupo 5 · Machine Learning · prova de conceito</p>
       <h1>Monitor de exercícios de reabilitação pela webcam</h1>
-      <p class="lede">Um app que acompanha exercícios de fisioterapia em casa usando só a câmera do computador: conta as repetições e diz, em tempo real, se cada uma foi bem executada, com dicas como "desça um pouco mais". Roda em qualquer notebook, sem GPU e sem internet, e o vídeo nunca sai da máquina.</p>
+      <p class="lede">Conta as repetições e diz, em tempo real, se cada uma foi bem executada. Roda em qualquer notebook, sem GPU e sem internet, e o vídeo nunca sai da máquina.</p>
       <div class="chips">
         <span class="chip ok">Funcionando ao vivo</span>
         <span class="chip ok">30 FPS em CPU</span>
@@ -215,7 +213,6 @@ html { scroll-behavior: smooth; }
       </div>
       <div class="facts">
         <div class="fact"><span>Exercícios</span><code>agachamento · elevação lateral · elevação frontal</code></div>
-        <div class="fact"><span>Apresentação</span><code>25/11/2026</code></div>
         <div class="fact"><span>Repositório</span><code>github.com/JohnsonBeast7/trabalho-ml</code></div>
       </div>
     </header>
@@ -226,12 +223,10 @@ html { scroll-behavior: smooth; }
         <h2>Em números</h2>
       </div>
       <div class="stats">
-        <div class="stat"><strong>30 FPS</strong><span>em notebook sem GPU, o dobro da meta de 15</span></div>
-        <div class="stat"><strong>30 de 30</strong><span>repetições contadas certo no teste ao vivo de calibração, nos 3 exercícios</span></div>
-        <div class="stat"><strong>≤ 1 rep</strong><span>de erro médio de contagem nos vídeos do grupo (meta: ≤ 1 por série de 10)</span></div>
-        <div class="stat"><strong>85–100%</strong><span>de acerto "certa × errada" das regras nos vídeos do grupo; o Random Forest acertou 0–30%</span></div>
-        <div class="stat"><strong>2.091</strong><span>repetições de 3 datasets públicos usadas para treinar e avaliar os modelos</span></div>
-        <div class="stat"><strong>66</strong><span>testes automatizados rodando no GitHub Actions a cada push</span></div>
+        <div class="stat"><strong>30 FPS</strong><span>em notebook sem GPU (meta: 15)</span></div>
+        <div class="stat"><strong>≤ 1 rep</strong><span>de erro médio de contagem nos vídeos do grupo</span></div>
+        <div class="stat"><strong>85–100%</strong><span>de acerto "certa × errada" das regras; Random Forest: 0–30%</span></div>
+        <div class="stat"><strong>2.091</strong><span>repetições de 3 datasets públicos</span></div>
       </div>
     </section>
 
@@ -241,51 +236,27 @@ html { scroll-behavior: smooth; }
         <h2>Como funciona</h2>
       </div>
       <ol class="steps">
-        <li><div><h3>Estimativa de pose</h3><p>Um modelo pré-treinado (MediaPipe BlazePose) encontra 33 pontos do corpo em cada quadro da webcam. Usamos 12: ombros, cotovelos, punhos, quadris, joelhos e tornozelos.</p></div></li>
-        <li><div><h3>Ângulos articulares</h3><p>Os pontos viram ângulos (joelho, quadril, ombro, cotovelo, inclinação do tronco), que não dependem da distância nem da posição da pessoa na imagem.</p></div></li>
-        <li><div><h3>Contagem de repetições</h3><p>Máquina de estados com histerese sobre o ângulo principal de cada exercício (joelho no agachamento, ombro nas elevações). Sem treino: os limiares foram calibrados com testes reais.</p></div></li>
-        <li><div><h3>Validações</h3><p>Movimentos que passam no contador mas não são o exercício não contam: corpo inteiro subindo (pulo), braços acima da cabeça, tronco curvado (pessoa indo até o computador).</p></div></li>
-        <li><div><h3>Avaliação e feedback</h3><p>Cada repetição é julgada por regras sobre os ângulos (amplitude, cotovelo esticado, tronco reto, simetria, ritmo), que viram dicas na tela. Ao parar, um resumo da série.</p></div></li>
+        <li><div><h3>Pose</h3><p>MediaPipe encontra os pontos do corpo em cada quadro.</p></div></li>
+        <li><div><h3>Ângulos</h3><p>Joelho, quadril, ombro, cotovelo e tronco: não dependem da distância da câmera.</p></div></li>
+        <li><div><h3>Contagem</h3><p>Máquina de estados sobre o ângulo principal; ignora pulos e braços acima da cabeça.</p></div></li>
+        <li><div><h3>Avaliação</h3><p>Regras calibradas na webcam julgam cada repetição e geram as dicas na tela.</p></div></li>
       </ol>
-      <div class="note info">
-        <b>Privacidade por construção</b>
-        <p>O vídeo é processado quadro a quadro e descartado; só os ângulos existem em memória. Nada é salvo nem enviado, o que atende à LGPD para dados de saúde.</p>
-      </div>
     </section>
 
-    <section id="tecnologias">
+    <section id="stack">
       <div class="sec-head">
-        <p class="eyebrow">Stack</p>
-        <h2>Tecnologias</h2>
+        <p class="eyebrow">Base técnica</p>
+        <h2>Tecnologias e dados</h2>
       </div>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Camada</th><th>Tecnologia</th><th>Papel</th></tr></thead>
+          <thead><tr><th>Camada</th><th>Usado</th></tr></thead>
           <tbody>
-            <tr><td>Pose</td><td>MediaPipe BlazePose</td><td>Estimador padrão: 3D, rápido em CPU</td></tr>
-            <tr><td>Pose (alternativa)</td><td>YOLO11-pose (Ultralytics)</td><td>Sugestão do professor, comparado com o MediaPipe</td></tr>
-            <tr><td>Vídeo</td><td>OpenCV</td><td>Captura da webcam, leitura de vídeos, degradações sintéticas</td></tr>
-            <tr><td>Modelos</td><td>scikit-learn · PyTorch</td><td>Random Forest e LSTM, comparados na avaliação</td></tr>
-            <tr><td>Interface</td><td>Streamlit</td><td>App web local, com modo de vídeo de arquivo</td></tr>
-            <tr><td>Engenharia</td><td>uv · pytest · ruff · GitHub Actions</td><td>Ambiente reproduzível, testes e lint a cada push</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section id="dados">
-      <div class="sec-head">
-        <p class="eyebrow">Bases</p>
-        <h2>Dados</h2>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Base</th><th>O que tem</th><th>Uso</th></tr></thead>
-          <tbody>
-            <tr><td><strong>UI-PRMD</strong></td><td>Esqueleto de Kinect, 10 pessoas, 600 repetições certas e erradas. Site oficial fora do ar: recuperado do Internet Archive</td><td>Treino e cenário A</td></tr>
-            <tr><td><strong>KIMORE</strong></td><td>Kinect, 78 pessoas, incluindo pacientes com dor lombar, AVC e Parkinson; nota clínica por série</td><td>Treino e análise de viés (cenário B)</td></tr>
-            <tr><td><strong>REHAB24-6</strong></td><td>Vídeo RGB de câmera comum, 10 pessoas, 738 repetições, com metadados de luz e pessoa extra</td><td>Diferença Kinect × webcam (F/F2) e robustez</td></tr>
-            <tr><td><strong>Vídeos do grupo</strong></td><td>9 vídeos de 4 pessoas, gravados com celular</td><td>Teste do app completo (cenários C e D)</td></tr>
+            <tr><td>Pose</td><td>MediaPipe BlazePose (padrão) · YOLO11-pose (comparado)</td></tr>
+            <tr><td>Modelos</td><td>scikit-learn (Random Forest) · PyTorch (LSTM)</td></tr>
+            <tr><td>App e vídeo</td><td>Streamlit · OpenCV</td></tr>
+            <tr><td>Engenharia</td><td>uv · pytest (66 testes) · GitHub Actions</td></tr>
+            <tr><td>Dados</td><td>UI-PRMD e KIMORE (Kinect, com pacientes) · REHAB24-6 (vídeo RGB) · 9 vídeos do grupo</td></tr>
           </tbody>
         </table>
       </div>
@@ -296,45 +267,27 @@ html { scroll-behavior: smooth; }
         <p class="eyebrow">Experimentos</p>
         <h2>O que testamos e descartamos</h2>
       </div>
-
-      <h3>Random Forest × LSTM (pessoas de teste nunca vistas no treino)</h3>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Cenário</th><th>Exercício</th><th>Random Forest</th><th>LSTM</th></tr></thead>
+          <thead><tr><th>Teste (pessoas fora do treino)</th><th>Random Forest</th><th>LSTM</th></tr></thead>
           <tbody>
-            <tr><td>A · Kinect (UI-PRMD)</td><td>Agachamento</td><td class="num">0,83</td><td class="num">0,80</td></tr>
-            <tr><td>A · Kinect (UI-PRMD)</td><td>Elevação lateral</td><td class="num">0,90</td><td class="num">0,74</td></tr>
-            <tr><td>A · Kinect (UI-PRMD)</td><td>Elevação frontal</td><td class="num">0,87</td><td class="num">0,73</td></tr>
-            <tr><td>F · treino Kinect, teste em vídeo</td><td>Agachamento / lateral</td><td class="num">0,31 / 0,40</td><td class="num">0,24 / 0,33</td></tr>
-            <tr><td>F2 · treino com vídeo incluído</td><td>Agachamento / lateral</td><td class="num">0,56 / 0,67</td><td class="num">0,51 / 0,69</td></tr>
+            <tr><td>Dados de Kinect (UI-PRMD)</td><td class="num">0,83–0,90</td><td class="num">0,73–0,80</td></tr>
+            <tr><td>Treino com Kinect, teste em vídeo comum</td><td class="num">0,31–0,40</td><td class="num">0,24–0,33</td></tr>
+            <tr><td>App nos vídeos do grupo (acerto)</td><td class="num">0–30%</td><td class="num">—</td></tr>
           </tbody>
         </table>
       </div>
-      <p>F1 macro; meta ≥ 0,80. Com poucos dados, o <strong>Random Forest superou a LSTM</strong> no Kinect, respondendo à dúvida do professor sobre a LSTM.</p>
-
       <div class="compare">
         <div class="bad">
-          <p class="lbl">Descartado no app: modelos treinados</p>
-          <p>Bons no Kinect, mas <strong>não generalizam para câmera comum</strong>: nos vídeos do grupo o Random Forest acertou 0–30% (0% na elevação frontal). Causas medidas: agachamentos do Kinect são eretos (tronco a 4°) e os de vídeo inclinam ~24°; ritmo diferente; cada base define "errado" de um jeito.</p>
+          <p class="lbl">Descartado: modelos treinados</p>
+          <p>O Random Forest venceu a LSTM no Kinect, mas <strong>não generaliza para câmera comum</strong>: postura, ritmo e critério de erro mudam entre as bases.</p>
         </div>
         <div class="good">
-          <p class="lbl">Adotado: regras calibradas na webcam</p>
-          <p>Limiares por exercício ajustados com testes ao vivo e com os vídeos do grupo: <strong>85–100% de acerto</strong> e dicas explicáveis ("desça mais", "mantenha os cotovelos estendidos").</p>
+          <p class="lbl">Adotado: regras calibradas</p>
+          <p><strong>85–100% de acerto</strong> nos vídeos do grupo, com dicas explicáveis.</p>
         </div>
       </div>
-
-      <h3>MediaPipe × YOLO-pose (app completo nos vídeos do grupo)</h3>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Exercício</th><th>Erro de contagem MediaPipe</th><th>Erro de contagem YOLO</th><th>Acerto MediaPipe</th><th>Acerto YOLO</th></tr></thead>
-          <tbody>
-            <tr><td>Agachamento</td><td class="num">0</td><td class="num">0</td><td class="num">100%</td><td class="num">100%</td></tr>
-            <tr><td>Elevação lateral</td><td class="num">1,0 (máx 2)</td><td class="num">1,7 (máx 4)</td><td class="num">85%</td><td class="num">90%</td></tr>
-            <tr><td>Elevação frontal</td><td class="num">0,8 (máx 2)</td><td class="num">1,2 (máx 2)</td><td class="num">88%</td><td class="num">79%</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p><strong>MediaPipe adotado:</strong> conta melhor, tem profundidade (3D) e roda a 30 FPS em CPU; o YOLO ficou entre 12 e 26 FPS.</p>
+      <p><strong>MediaPipe × YOLO:</strong> o MediaPipe contou melhor (erro 0,8–1,0 contra 1,2–1,7) e é mais rápido (30 contra 12–26 FPS).</p>
     </section>
 
     <section id="problemas">
@@ -344,14 +297,13 @@ html { scroll-behavior: smooth; }
       </div>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Problema</th><th>Impacto</th><th>Situação</th></tr></thead>
+          <thead><tr><th>Problema</th><th>Situação</th></tr></thead>
           <tbody>
-            <tr><td>Nos datasets, as elevações são feitas com um braço só</td><td>Os modelos aprendiam "um braço parado" como normal</td><td><span class="chip ok">Braço espelhado</span></td></tr>
-            <tr><td>Profundidade estimada pelo MediaPipe é ruidosa</td><td>Pessoa em pé aparecia com o tronco 25° inclinado</td><td><span class="chip ok">Tronco medido em 2D</span></td></tr>
-            <tr><td>De lado, braço acima da cabeça mede só ~135°</td><td>Elevações acima da cabeça eram contadas</td><td><span class="chip ok">Limite ajustado para 125°</span></td></tr>
-            <tr><td>Medida de "corpo parado" inflada quando os braços sobem</td><td>Elevações normais rejeitadas como pulo</td><td><span class="chip ok">Medida corrigida</span></td></tr>
-            <tr><td>Trocar de exercício no meio da série derrubava o app</td><td>Componente nativo do MediaPipe liberado durante o uso</td><td><span class="chip ok">Corrigido e testado</span></td></tr>
-            <tr><td>Cotovelo dobrado na elevação lateral, vista de frente</td><td>A dobra fica na profundidade, invisível na imagem</td><td><span class="chip warn">Limitação documentada</span></td></tr>
+            <tr><td>Datasets com elevação de um braço só</td><td><span class="chip ok">Braço espelhado</span></td></tr>
+            <tr><td>Profundidade ruidosa inclinava o tronco em 25°</td><td><span class="chip ok">Tronco medido em 2D</span></td></tr>
+            <tr><td>De lado, "acima da cabeça" mede só ~135°</td><td><span class="chip ok">Limite em 125°</span></td></tr>
+            <tr><td>Trocar de exercício no meio da série derrubava o app</td><td><span class="chip ok">Corrigido</span></td></tr>
+            <tr><td>Cotovelo dobrado na elevação lateral, vista de frente</td><td><span class="chip warn">Limitação</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -362,30 +314,20 @@ html { scroll-behavior: smooth; }
         <p class="eyebrow">Condições adversas</p>
         <h2>Robustez</h2>
       </div>
-      <p>Degradações aplicadas por software aos vídeos do grupo (um por exercício), com o app completo e o MediaPipe:</p>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Condição</th><th>Detecção da pose</th><th>Erro de contagem</th><th>Situação</th></tr></thead>
+          <thead><tr><th>Condição (simulada nos vídeos do grupo)</th><th>Detecção</th><th>Erro de contagem</th><th>Situação</th></tr></thead>
           <tbody>
-            <tr><td>Vídeo original</td><td class="num">97%</td><td class="num">1,0</td><td><span class="chip ok">Base</span></td></tr>
-            <tr><td>Desfoque forte</td><td class="num">97%</td><td class="num">1,0</td><td><span class="chip ok">Robusto</span></td></tr>
-            <tr><td>Escuro (12% do brilho)</td><td class="num">94%</td><td class="num">0,7</td><td><span class="chip ok">Robusto</span></td></tr>
-            <tr><td>Resolução de 96 px de largura</td><td class="num">97%</td><td class="num">0,7</td><td><span class="chip ok">Robusto</span></td></tr>
-            <tr><td>Pessoa longe (25% do tamanho)</td><td class="num">94%</td><td class="num">0,7</td><td><span class="chip ok">Robusto</span></td></tr>
-            <tr><td>Ruído moderado</td><td class="num">85%</td><td class="num">2,3</td><td><span class="chip warn">Degrada</span></td></tr>
-            <tr><td>Ruído forte</td><td class="num">64%</td><td class="num">3,3</td><td><span class="chip down">Falha</span></td></tr>
+            <tr><td>Original</td><td class="num">97%</td><td class="num">1,0</td><td><span class="chip ok">Base</span></td></tr>
+            <tr><td>Escuro, desfoque, baixa resolução, pessoa longe</td><td class="num">94–99%</td><td class="num">0,7–1,0</td><td><span class="chip ok">Robusto</span></td></tr>
+            <tr><td>Ruído de imagem forte</td><td class="num">64%</td><td class="num">3,3</td><td><span class="chip down">Falha</span></td></tr>
           </tbody>
         </table>
       </div>
       <div class="note">
-        <b>Recomendação de uso: boa iluminação</b>
-        <p>O ponto fraco é o ruído de imagem, a granulação que webcams baratas geram com pouca luz. Escuro, desfoque, baixa resolução e distância quase não afetam.</p>
+        <b>Recomendação: boa iluminação</b>
+        <p>O ponto fraco é a granulação que webcams geram com pouca luz. Em vídeos externos (REHAB24-6) com a luz apagada, o agachamento ainda contou 93% das repetições.</p>
       </div>
-      <ul class="plain">
-        <li><strong>REHAB24-6, luz apagada:</strong> no agachamento o app contou 91 de 98 repetições (93%) em vídeos de pessoas de fora do grupo.</li>
-        <li><strong>Pessoa extra na cena:</strong> o MediaPipe segue a pessoa principal; detecção de 100% nos vídeos com outra pessoa aparecendo.</li>
-        <li><strong>Câmera girada:</strong> vídeos gravados com a imagem rotacionada 90° não são reconhecidos (0% de detecção). A câmera precisa ficar na vertical correta.</li>
-      </ul>
     </section>
 
     <section id="limites">
@@ -394,23 +336,9 @@ html { scroll-behavior: smooth; }
         <h2>Limitações</h2>
       </div>
       <ul class="plain">
-        <li><strong>Viés com pacientes:</strong> no KIMORE os modelos vão pior com pacientes que com saudáveis (F1 0,18 no agachamento de pacientes); o rótulo é uma nota clínica da série inteira.</li>
-        <li><strong>Elevação frontal:</strong> nenhum dataset tem exatamente esse movimento (sobem até ~68° ou acima da cabeça); só os vídeos do grupo o avaliam.</li>
-        <li><strong>Não testados:</strong> roupa larga e objetos cobrindo as pernas; agachamento com só 1 vídeo do grupo.</li>
-        <li><strong>Rótulos dos vídeos do grupo</strong> anotados por inspeção visual dos quadros.</li>
-      </ul>
-    </section>
-
-    <section id="demo">
-      <div class="sec-head">
-        <p class="eyebrow">Ao vivo</p>
-        <h2>Demonstração</h2>
-      </div>
-      <ul class="checks">
-        <li><div><p><strong>Agachamento</strong>, câmera de lado: algumas repetições certas e uma rasa de propósito.</p></div></li>
-        <li><div><p><strong>Elevação lateral</strong>, de frente: uma com um braço mais alto.</p></div></li>
-        <li><div><p><strong>Pulo e braços acima da cabeça</strong>: não contam.</p></div></li>
-        <li><div><p><strong>Resumo da série</strong> ao parar.</p></div></li>
+        <li><strong>Viés:</strong> modelos vão pior com pacientes do que com pessoas saudáveis.</li>
+        <li><strong>Pouco vídeo próprio:</strong> 9 vídeos; roupa larga e oclusão não testadas.</li>
+        <li><strong>Elevação frontal</strong> sem equivalente exato nos datasets públicos.</li>
       </ul>
     </section>
 
