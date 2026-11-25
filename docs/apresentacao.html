@@ -194,7 +194,6 @@ html { scroll-behavior: smooth; }
       <li><a href="#funcionamento">Como funciona</a></li>
       <li><a href="#stack">Tecnologias e dados</a></li>
       <li><a href="#testado">O que testamos e descartamos</a></li>
-      <li><a href="#problemas">Problemas encontrados</a></li>
       <li><a href="#robustez">Robustez</a></li>
       <li><a href="#limites">Limitações</a></li>
     </ol>
@@ -274,25 +273,6 @@ html { scroll-behavior: smooth; }
         </div>
       </div>
       <p><strong>MediaPipe × YOLO:</strong> o MediaPipe contou melhor (erro 0,8–1,0 contra 1,2–1,7) e é mais rápido (30 contra 12–26 FPS).</p>
-    </section>
-
-    <section id="problemas">
-      <div class="sec-head">
-        <p class="eyebrow">Achados</p>
-        <h2>Problemas encontrados nos testes</h2>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Problema</th><th>Situação</th></tr></thead>
-          <tbody>
-            <tr><td>Datasets com elevação de um braço só</td><td><span class="chip ok">Braço espelhado</span></td></tr>
-            <tr><td>Profundidade ruidosa inclinava o tronco em 25°</td><td><span class="chip ok">Tronco medido em 2D</span></td></tr>
-            <tr><td>De lado, "acima da cabeça" mede só ~135°</td><td><span class="chip ok">Limite em 125°</span></td></tr>
-            <tr><td>Trocar de exercício no meio da série derrubava o app</td><td><span class="chip ok">Corrigido</span></td></tr>
-            <tr><td>Cotovelo dobrado na elevação lateral, vista de frente</td><td><span class="chip warn">Limitação</span></td></tr>
-          </tbody>
-        </table>
-      </div>
     </section>
 
     <section id="robustez">
