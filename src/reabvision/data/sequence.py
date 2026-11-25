@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from reabvision.skeleton import N_JOINTS
+from reabvision.skeleton import N_JOINTS, J
 
 TARGET_FPS = 30.0
 
@@ -53,3 +53,17 @@ def resample(joints: np.ndarray, fps_in: float, fps_out: float = TARGET_FPS) -> 
         ok = ~np.isnan(col)
         out[:, j] = np.interp(t_out, t_in[ok], col[ok]) if ok.sum() >= 2 else np.nan
     return out.reshape(n_out, *joints.shape[1:])
+
+
+def mirror_right_arm(joints: np.ndarray) -> np.ndarray:
+    """Copia o braço direito, espelhado, para o esquerdo (exercício feito com um braço só).
+
+    Nossos exercícios usam os dois braços; sem isso o modelo veria um braço parado.
+    Espelha no eixo lateral (x) em torno do ponto médio dos ombros.
+    """
+    out = joints.copy()
+    mid_x = (joints[:, J["l_shoulder"], 0] + joints[:, J["r_shoulder"], 0]) / 2
+    for left, right in (("l_elbow", "r_elbow"), ("l_wrist", "r_wrist")):
+        out[:, J[left]] = joints[:, J[right]]
+        out[:, J[left], 0] = 2 * mid_x - joints[:, J[right], 0]
+    return out

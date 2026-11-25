@@ -21,13 +21,15 @@ from pathlib import Path
 
 import numpy as np
 
-from reabvision.data.sequence import Sequence
+from reabvision.data.sequence import Sequence, mirror_right_arm
 from reabvision.paths import DATA
 
 RAW = DATA / "raw" / "uiprmd"
 FPS = 30.0
 ZIPS = {1: "Segmented Movements.zip", 0: "Incorrect Segmented Movements.zip"}
 MOVEMENTS = {"m01": "squat", "m07": "lateral_raise", "m10": "front_raise"}
+# m07 e m10 são feitos só com o braço direito; o app usa os dois braços.
+ONE_ARM = {"m07", "m10"}
 
 # Hierarquia das 22 juntas do Kinect no UI-PRMD (pai de cada junta; -1 = raiz).
 # 0 cintura, 1 coluna, 2 peito, 3 pescoço, 4 cabeça, 5 topo da cabeça,
@@ -102,12 +104,15 @@ def load_uiprmd(raw_dir: Path = RAW, movements: dict[str, str] = MOVEMENTS) -> l
                 ang = _read(zf, angles[key])
                 n = min(len(pos), len(ang))
                 glob = forward_kinematics(pos[:n], ang[:n]) / 100.0  # cm -> m
+                joints = glob[:, list(COMMON_INDEX)]
+                if movement in ONE_ARM:
+                    joints = mirror_right_arm(joints)
                 seqs.append(
                     Sequence(
                         dataset="uiprmd",
                         subject_id=f"uiprmd_s{subject}",
                         exercise=movements[movement],
-                        joints=glob[:, list(COMMON_INDEX)],
+                        joints=joints,
                         fps=FPS,
                         label=label,
                         rep_labels=[label],

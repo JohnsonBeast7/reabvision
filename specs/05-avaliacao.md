@@ -7,7 +7,7 @@ Pessoas do teste **nunca** aparecem no treino nem na validação. Evita que o mo
 - UI-PRMD (10 participantes): validação cruzada leave-one-subject-out (LOSO) ou `GroupKFold(5)`.
 - KIMORE: `GroupShuffleSplit` estratificado por grupo clínico, ~20% dos participantes no teste.
 - Vídeos próprios: sempre e só teste.
-- REHAB24-6: só teste (ver [01](01-dados.md#rehab24-6-černek-sedmidubský-budíková--sisap-2024)).
+- REHAB24-6: teste no cenário F (treino sem ele) e treino + teste deixando uma pessoa de fora no cenário F2.
 
 ## Cenários de avaliação
 
@@ -18,7 +18,8 @@ Pessoas do teste **nunca** aparecem no treino nem na validação. Evita que o mo
 | C | UI-PRMD + KIMORE | Vídeos próprios (webcam) | Funciona com câmera comum? (gap Kinect × webcam) |
 | D | C + estimador trocado | Vídeos próprios com YOLO-pose | MediaPipe ou YOLO dá melhor resultado final? |
 | ~~E~~ | — | — | Removido: a cópia acessível do KIMORE não tem vídeo RGB. A diferença Kinect × webcam é medida pelos cenários C e F. |
-| F | UI-PRMD + KIMORE | REHAB24-6 (`squat` e `lateral_raise`) | Generaliza para pessoas e câmeras de fora do grupo? |
+| F | UI-PRMD + KIMORE | REHAB24-6 (`squat` e `lateral_raise`) | Um modelo treinado só com Kinect funciona em vídeo de câmera comum? (diferença Kinect × webcam) |
+| F2 | UI-PRMD + KIMORE + REHAB24-6 sem a pessoa testada | REHAB24-6, uma pessoa por vez | Com vídeo no treino, generaliza para pessoas novas? |
 
 ## Métricas
 

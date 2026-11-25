@@ -2,7 +2,7 @@
 
     uv run python -m reabvision.models.train                      # RF e LSTM, 3 exercícios
     uv run python -m reabvision.models.train --model rf --exercise squat
-    uv run python -m reabvision.models.train --train uiprmd,kimore
+    uv run python -m reabvision.models.train --train uiprmd,kimore   # sem o REHAB24-6
 
 Validação sempre agrupada por participante (nenhuma pessoa aparece em treino e
 validação ao mesmo tempo). O limiar de decisão é escolhido nas predições
@@ -160,7 +160,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--model", choices=["rf", "lstm", "all"], default="all")
     parser.add_argument("--exercise", choices=[*EXERCISES, "all"], default="all")
-    parser.add_argument("--train", default="uiprmd,kimore", help="datasets de treino")
+    parser.add_argument("--train", default="uiprmd,kimore,rehab24", help="datasets de treino")
     args = parser.parse_args()
 
     train_sets = args.train.split(",")

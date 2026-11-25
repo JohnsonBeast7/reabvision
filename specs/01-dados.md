@@ -25,7 +25,8 @@
 - 65 gravações de 10 adultos saudáveis, 30 FPS, **vídeo RGB de duas câmeras** (horizontal e vertical), sequências de esqueleto, segmentação por repetição e rótulo **correto/incorreto por repetição** (orientado por fisioterapeuta: ≥ 5 corretas e ≥ 5 incorretas por série). ~1.057 repetições após filtragem.
 - 6 exercícios: abdução de braço, "arm VW", flexão na mesa, abdução de perna, avanço e agachamento. **Dois coincidem com os nossos**: abdução de braço = `lateral_raise` e agachamento = `squat`. Não há equivalente da elevação frontal.
 - Papel: **teste externo com câmera RGB comum e pessoas de fora do grupo** (cenário F em [05](05-avaliacao.md)) e teste extra do contador (tem segmentação por repetição). Como roda MediaPipe/YOLO sobre o vídeo, é o conjunto mais parecido com o uso real.
-- Uso no treino PODE ser testado depois (com divisão por participante), mas só se o desempenho no cenário C ficar abaixo da meta — para manter o teste limpo.
+- **Também entra no treino** (decisão de 24/11/2026): treinado só com Kinect, o modelo errou quase tudo no REHAB24-6 (F1 ~0,3; cenário F). Com o REHAB24-6 no treino, a avaliação passa a deixar cada pessoa do REHAB24-6 fora do treino quando é testada (cenário F2).
+- No REHAB24-6 e no UI-PRMD (m07, m10) as elevações são feitas **só com o braço direito**; o braço é espelhado para o lado esquerdo (`mirror_right_arm`), porque o app usa os dois braços.
 - Disponível no Zenodo (DOI 10.5281/zenodo.13305826), acesso aberto. Licença **CC BY-NC 4.0**: uso acadêmico não comercial permitido, citação obrigatória do artigo (Černek; Sedmidubský; Budíková. *REHAB24-6: Physical Therapy Dataset for Analyzing Pose Estimation Methods*. SISAP 2024). Compatível com o projeto.
 - Arquivos necessários: `videos.zip` (2,7 GB) e `Segmentation.csv`. Os demais (`2d/3d_joints`, `2d/3d_markers`, ~3 GB) PODEM ser baixados para comparar o esqueleto de referência com o MediaPipe/YOLO.
 

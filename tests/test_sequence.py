@@ -23,3 +23,18 @@ def test_sequence_validates_shape():
     Sequence("own", "own_a", "squat", np.zeros((5, 12, 3)), fps=30)
     with pytest.raises(ValueError):
         Sequence("own", "own_a", "squat", np.zeros((5, 10, 3)), fps=30)
+
+
+def test_mirror_right_arm():
+    from reabvision.data.sequence import mirror_right_arm
+    from reabvision.skeleton import J
+
+    j = np.zeros((1, 12, 3))
+    j[0, J["l_shoulder"]] = (-0.2, 1.4, 0)
+    j[0, J["r_shoulder"]] = (0.2, 1.4, 0)
+    j[0, J["r_elbow"]] = (0.5, 1.4, 0.1)  # braço direito levantado
+    j[0, J["r_wrist"]] = (0.8, 1.4, 0.2)
+    m = mirror_right_arm(j)
+    np.testing.assert_allclose(m[0, J["l_elbow"]], (-0.5, 1.4, 0.1))
+    np.testing.assert_allclose(m[0, J["l_wrist"]], (-0.8, 1.4, 0.2))
+    np.testing.assert_allclose(m[0, J["r_elbow"]], j[0, J["r_elbow"]])

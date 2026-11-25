@@ -25,7 +25,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from reabvision.data.sequence import Sequence
+from reabvision.data.sequence import Sequence, mirror_right_arm
 from reabvision.paths import DATA
 
 RAW = DATA / "raw" / "rehab24"
@@ -137,12 +137,15 @@ def load_rehab24(estimator_name: str = "mediapipe") -> list[Sequence]:
             )
             for r in rows
         ]
+        joints = data["joints"]
+        if "right arm" in rows[0]["exercise_subtype"]:
+            joints = mirror_right_arm(joints)
         out.append(
             Sequence(
                 dataset="rehab24",
                 subject_id=f"rehab24_p{rows[0]['person_id']}",
                 exercise=EXERCISE_MAP[rows[0]["exercise_id"]],
-                joints=data["joints"],
+                joints=joints,
                 fps=float(data["fps"]),
                 rep_labels=[r.correct for r in reps],
                 meta={
