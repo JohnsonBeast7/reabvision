@@ -196,6 +196,7 @@ html { scroll-behavior: smooth; }
       <li><a href="#testado">O que testamos e descartamos</a></li>
       <li><a href="#robustez">Robustez</a></li>
       <li><a href="#limites">Limitações</a></li>
+      <li><a href="#proximos">Próximos passos</a></li>
     </ol>
   </nav>
 
@@ -315,6 +316,20 @@ html { scroll-behavior: smooth; }
       <ul class="plain">
         <li><strong>Viés:</strong> modelos vão pior com pacientes do que com pessoas saudáveis.</li>
         <li><strong>Elevação frontal</strong> sem equivalente exato nos datasets públicos.</li>
+      </ul>
+    </section>
+
+    <section id="proximos">
+      <div class="sec-head">
+        <p class="eyebrow">Depois</p>
+        <h2>Próximos passos</h2>
+      </div>
+      <ul class="plain">
+        <li><strong>Validar com fisioterapeutas:</strong> revisar os limiares das regras (quanto descer, até onde elevar) com critério clínico.</li>
+        <li><strong>Testar com pacientes reais:</strong> hoje só pessoas saudáveis usaram o app, e é com pacientes que o viés apareceu nos dados públicos.</li>
+        <li><strong>Treinar com vídeo de webcam:</strong> os modelos falharam por aprender com Kinect; com vídeos de câmera comum rotulados por fisioterapeutas, o Random Forest pode voltar a ser útil.</li>
+        <li><strong>Mais exercícios:</strong> cada exercício novo é só configuração (ângulo principal, limiares e dicas), sem código novo.</li>
+        <li><strong>Acompanhamento do fisioterapeuta:</strong> guardar o histórico das séries, só números e sem vídeo, para o profissional ver a evolução.</li>
       </ul>
     </section>
 
