@@ -99,12 +99,17 @@ with st.sidebar:
         "Modelo de pose", list(ESTIMATORS), format_func=lambda k: ESTIMATORS[k]
     )
     ex_for_models = ss.exercise or EXERCISES[0]
-    model_options = ["regras", *available_models(ex_for_models)]
-    model_kind = st.selectbox(
-        "Avaliação da repetição",
-        model_options,
-        format_func=lambda k: "Regras (sem modelo treinado)" if k == "regras" else MODEL_KINDS[k],
-    )
+    # RF e LSTM ficam escondidos: nos vídeos de câmera comum acertaram só 0–30%
+    # (regras: 85–100%). Para testar, rode com REABVISION_EXPERIMENTAL=1.
+    if os.environ.get("REABVISION_EXPERIMENTAL"):
+        model_options = ["regras", *available_models(ex_for_models)]
+        model_kind = st.selectbox(
+            "Avaliação da repetição (experimental)",
+            model_options,
+            format_func=lambda k: "Regras" if k == "regras" else MODEL_KINDS[k],
+        )
+    else:
+        model_kind = "regras"
     source = st.radio("Fonte do vídeo", ["Webcam", "Arquivo de vídeo"])
     if source == "Webcam":
         cameras = cached_cameras()

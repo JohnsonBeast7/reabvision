@@ -40,7 +40,7 @@ App simples, roda no notebook do apresentador, sem internet e sem GPU.
 | APP-05 | Dicas das regras de feedback | DEVE |
 | APP-06 | Aviso de pose inválida | DEVE |
 | APP-07 | Resumo da série ao parar | DEVE |
-| APP-08 | Troca de estimador e de modelo pela barra lateral | DEVE |
+| APP-08 | Troca de estimador pela barra lateral; troca de modelo (RF/LSTM) só no modo experimental (`REABVISION_EXPERIMENTAL=1`), porque os modelos falharam em vídeo de câmera comum | DEVE |
 | APP-09 | Modo vídeo de arquivo | DEVE |
 | APP-10 | Plano B com janela OpenCV | PODE |
 | APP-11 | Nenhum quadro é salvo em disco nem enviado pela rede | DEVE |

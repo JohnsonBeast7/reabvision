@@ -6,6 +6,8 @@ Sem spec própria: cobre as etapas "Documentação", "Preparação da apresenta�
 
 - [ ] Relatório final consolidando `reports/results.md` e a análise de robustez (AVA-04, ROB-05)
 - [ ] Seção de limitações: viés, Kinect × webcam, condições que degradam
+- [ ] **Destacar que o Random Forest acertou pouco nos vídeos de câmera comum** (0–30% nos vídeos do grupo; 0% na elevação frontal; F1 0,31–0,40 no REHAB24-6 treinando só com Kinect), apesar de bater a meta no Kinect (cenário A: 0,83–0,90). Por isso o app usa as regras (D4)
+- [ ] Limitações não testadas: roupa larga (C14) e oclusão (C15); agachamento com só 1 vídeo próprio; rótulos dos vídeos próprios anotados por inspeção visual
 - [ ] Atualizar as specs com as decisões tomadas durante o projeto (D1, D6, D7)
 - [ ] Revisar README final (INF-02)
 
