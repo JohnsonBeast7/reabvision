@@ -65,6 +65,20 @@ def blur(kernel: int) -> Degrade:
     return lambda f: cv2.GaussianBlur(f, (kernel, kernel), 0)
 
 
+def far(scale: float) -> Degrade:
+    """Simula a pessoa mais longe: reduz a imagem e centraliza numa moldura do tamanho original."""
+
+    def fn(f: np.ndarray) -> np.ndarray:
+        h, w = f.shape[:2]
+        small = cv2.resize(f, (max(1, int(w * scale)), max(1, int(h * scale))))
+        out = np.full_like(f, int(np.median(f)))
+        y, x = (h - small.shape[0]) // 2, (w - small.shape[1]) // 2
+        out[y : y + small.shape[0], x : x + small.shape[1]] = small
+        return out
+
+    return fn
+
+
 SYNTHETIC: dict[str, Degrade] = {
     "escuro_50": darken(0.5),
     "escuro_25": darken(0.25),
@@ -78,6 +92,9 @@ SYNTHETIC: dict[str, Degrade] = {
     "desfoque_7": blur(7),
     "desfoque_15": blur(15),
     "desfoque_31": blur(31),
+    "longe_60": far(0.6),
+    "longe_40": far(0.4),
+    "longe_25": far(0.25),
 }
 
 

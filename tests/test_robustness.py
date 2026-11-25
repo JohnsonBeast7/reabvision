@@ -1,6 +1,6 @@
 import numpy as np
 
-from reabvision.robustness.robustness import SYNTHETIC, blur, darken, low_resolution, noise
+from reabvision.robustness.robustness import SYNTHETIC, blur, darken, far, low_resolution, noise
 
 
 def test_degradations_keep_shape_and_dtype():
@@ -19,3 +19,6 @@ def test_degradation_effects():
     detail = lambda f: np.abs(np.diff(f.astype(int), axis=1)).mean()  # noqa: E731
     assert detail(low_resolution(16)(frame)) < detail(frame) / 2
     assert detail(blur(7)(frame)) < detail(frame) / 2
+    # "longe": a imagem original ocupa só o centro; as bordas viram moldura uniforme
+    small = far(0.5)(frame)
+    assert small[0, 0].tolist() == small[0, -1].tolist() == small[-1, 0].tolist()
