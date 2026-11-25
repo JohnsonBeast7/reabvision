@@ -33,11 +33,8 @@ import numpy as np
 import pandas as pd
 
 from reabvision.config import load_exercises
-from reabvision.counting.counter import segment_reps
-from reabvision.features.angles import compute_angles, primary_angle
 from reabvision.paths import DATA, REPORTS
 from reabvision.pose import make_estimator
-from reabvision.skeleton import J
 
 Degrade = Callable[[np.ndarray], np.ndarray]
 
@@ -149,10 +146,14 @@ def rehab_items(n_per_exercise: int) -> Iterator[VideoItem]:
                     )
 
 
-def own_items(annotations: Path = DATA / "own" / "annotations.csv") -> Iterator[VideoItem]:
+def own_items(
+    annotations: Path = DATA / "own" / "annotations.csv", only: set[str] | None = None
+) -> Iterator[VideoItem]:
     cfgs = load_exercises()
     with annotations.open(newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
+            if only and row["video_id"] not in only:
+                continue
             path = annotations.parent / "videos" / f"{row['video_id']}.mp4"
             if not path.exists():
                 print(f"vídeo ausente: {path}")
@@ -168,11 +169,18 @@ def own_items(annotations: Path = DATA / "own" / "annotations.csv") -> Iterator[
 
 # --------------------------------------------------------------------- métricas
 def measure(item: VideoItem, estimator_name: str, degrade: Degrade | None) -> dict:
-    cfg = load_exercises()[item.exercise]
+    """Roda pose (com a degradação) a ~30 FPS e conta com a mesma sessão do app."""
+    from dataclasses import replace
+
+    from reabvision.models.own_eval import TARGET_FPS, _Replay
+    from reabvision.session import ExerciseSession
+
+    cfg = replace(load_exercises()[item.exercise], primary_angles=tuple(item.primary))
     estimator = make_estimator(estimator_name)
     cap = cv2.VideoCapture(str(item.path))
-    fps_video = cap.get(cv2.CAP_PROP_FPS) or 30.0
-    joints, vis = [], []
+    fps_video = cap.get(cv2.CAP_PROP_FPS) or TARGET_FPS
+    step = max(1, round(fps_video / TARGET_FPS))
+    poses, times = [], []
     t0 = time.perf_counter()
     idx = 0
     try:
@@ -180,38 +188,37 @@ def measure(item: VideoItem, estimator_name: str, degrade: Degrade | None) -> di
             ok, frame = cap.read()
             if not ok:
                 break
-            if degrade is not None:
-                frame = degrade(frame)
-            pose = estimator.process(frame, int(idx * 1000 / fps_video))
-            joints.append(pose.joints if pose else np.full((12, 3), np.nan))
-            vis.append(pose.visibility if pose else np.zeros(12))
+            if idx % step == 0:
+                if degrade is not None:
+                    frame = degrade(frame)
+                poses.append(estimator.process(frame, int(idx * 1000 / fps_video)))
+                times.append(idx / fps_video)
             idx += 1
     finally:
         cap.release()
         estimator.close()
     elapsed = time.perf_counter() - t0
-    joints, vis = np.array(joints), np.array(vis)
-    angles = compute_angles(joints)
-    for col in item.primary:  # mesmo critério do app: ângulo com junta pouco visível = NaN
-        from reabvision.features.angles import ANGLE_TRIPLETS
 
-        triplet = ANGLE_TRIPLETS[col]
-        low = np.min(vis[:, [J[j] for j in triplet]], axis=1) < 0.5
-        angles.loc[low, col] = np.nan
-    signal = primary_angle(angles, list(item.primary))
-    valid = ~np.isnan(signal)
-    counted = len(segment_reps(signal, fps_video, cfg))
+    session = ExerciseSession(cfg, _Replay(poses, estimator_name))
+    dummy = np.zeros((1, 1, 3), np.uint8)
+    signal = []
+    for t in times:
+        state = session.process(dummy, t)
+        signal.append(np.nan if state.angle is None else state.angle)
+    session.close()
+    signal = np.array(signal)
+    counted = session.counter.count
     diffs = np.abs(np.diff(signal))
     return {
         **item.meta,
         "exercicio": item.exercise,
         "estimador": estimator_name,
-        "deteccao": float(valid.mean()) if len(signal) else 0.0,
+        "deteccao": float(np.mean(~np.isnan(signal))) if len(signal) else 0.0,
         "estabilidade": float(np.nanmedian(diffs)) if np.any(~np.isnan(diffs)) else np.nan,
         "reps_reais": item.true_reps,
         "reps_contadas": counted,
         "erro_contagem": abs(counted - item.true_reps) if item.true_reps is not None else np.nan,
-        "fps": idx / elapsed if elapsed > 0 else 0.0,
+        "fps": len(poses) / elapsed if elapsed > 0 else 0.0,
     }
 
 
@@ -306,8 +313,12 @@ def main() -> None:
     parser.add_argument("--videos", type=int, default=3, help="vídeos por exercício (rehab24)")
     parser.add_argument("--estimators", default="mediapipe,yolo")
     parser.add_argument("--no-synthetic", action="store_true")
+    parser.add_argument(
+        "--only", default="", help="vídeos próprios a usar (ids separados por vírgula)"
+    )
     args = parser.parse_args()
-    items = list(rehab_items(args.videos) if args.source == "rehab24" else own_items())
+    only = set(filter(None, args.only.split(","))) or None
+    items = list(rehab_items(args.videos) if args.source == "rehab24" else own_items(only=only))
     df = run(items, args.estimators.split(","), synthetic=not args.no_synthetic)
     print("ok:", write_report(df, args.source))
 
