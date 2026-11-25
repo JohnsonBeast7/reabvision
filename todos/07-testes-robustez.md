@@ -18,8 +18,8 @@ Spec: [07-testes-robustez.md](../specs/07-testes-robustez.md)
 
 ## Análise
 
-- [ ] Script `robustness.py`: roda MediaPipe e YOLO-pose nos vídeos próprios, no REHAB24-6 (por metadado de condição) e nas versões sintéticas (ROB-04)
+- [x] Script `robustness.py`: roda MediaPipe e YOLO-pose nos vídeos próprios, no REHAB24-6 (por metadado de condição) e nas versões sintéticas (ROB-04)
 - [ ] Métricas por condição: taxa de detecção, estabilidade, erro de contagem, F1 macro, FPS (ROB-04)
 - [ ] Gráfico de queda relativa à condição base (ROB-04)
 - [ ] Seção no relatório: condições que mais degradam e recomendações de uso (ROB-05)
-- [ ] Degradações sintéticas (escurecer, resolução, ruído, desfoque) em níveis crescentes (ROB-06)
+- [x] Degradações sintéticas (escurecer, resolução, ruído, desfoque) em níveis crescentes (ROB-06)

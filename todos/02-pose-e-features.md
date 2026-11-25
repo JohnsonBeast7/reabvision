@@ -4,7 +4,7 @@ Spec: [02-pose-e-features.md](../specs/02-pose-e-features.md)
 
 ## Estimadores de pose
 
-- [ ] Estudar YOLO-pose (Ultralytics): instalação, saída de 17 pontos, FPS em CPU (D5)
+- [x] Estudar YOLO-pose (Ultralytics): instalação, saída de 17 pontos, FPS em CPU (D5)
 - [x] Interface `PoseEstimator` e dataclass `PoseResult` (POS-01)
 - [x] Implementação MediaPipe usando `pose_world_landmarks`, variante lite/full configurável (POS-01)
 - [x] Implementação YOLO-pose (modelo nano) atrás da mesma interface (POS-02)
@@ -21,7 +21,7 @@ Spec: [02-pose-e-features.md](../specs/02-pose-e-features.md)
 - [x] Ângulo de inclinação do tronco (FEA-01)
 - [x] Ângulo principal por exercício (`squat`, `lateral_raise`, `front_raise`)
 - [x] Atributos por repetição para o RF: mín, máx, amplitude, média, desvio, velocidades, duração, assimetria (FEA-02)
-- [ ] Sequência por repetição reamostrada para 64 quadros + z-score com estatísticas do treino (FEA-03)
+- [x] Sequência por repetição reamostrada para 64 quadros + z-score com estatísticas do treino (FEA-03)
 - [x] Garantir que treino e app importam o mesmo módulo de atributos (FEA-04)
 - [ ] Valgo do joelho no plano frontal **(PODE)**
 

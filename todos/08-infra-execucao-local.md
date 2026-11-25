@@ -21,6 +21,6 @@ Spec: [08-infra-execucao-local.md](../specs/08-infra-execucao-local.md)
 ## Antes da apresentação
 
 - [ ] Clone limpo + README → app funcionando, em pelo menos 2 notebooks (Windows e Linux) (INF-08)
-- [ ] README final: instalação, app, treino, avaliação, aviso de uso, citações dos datasets (INF-02)
+- [x] README final: instalação, app, treino, avaliação, aviso de uso, citações dos datasets (INF-02)
 - [ ] Dockerfile **(PODE)** (INF-06)
 - [ ] Hugging Face Spaces em modo vídeo de arquivo **(PODE)** (INF-07)
