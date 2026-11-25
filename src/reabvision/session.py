@@ -33,20 +33,30 @@ MSG_BODY_MOVING = "Não contou: mantenha o corpo parado, só os braços se movem
 MSG_TOO_HIGH = "Não contou: eleve só até a altura dos ombros"
 
 
-def body_height(pose: PoseResult, min_visibility: float = 0.5) -> float:
-    """Altura dos ombros na imagem em unidades de "tamanho do tronco".
+def body_position(pose: PoseResult, min_visibility: float = 0.5) -> tuple[float, float]:
+    """(altura dos ombros na imagem, tamanho do tronco), em pixels. NaN se pouco visíveis.
 
-    Variações grandes dentro de uma repetição indicam que o corpo inteiro subiu ou
-    desceu (pulo), e não só os braços. NaN se ombros/quadris pouco visíveis.
+    O deslocamento vertical dos ombros dividido pelo tamanho MÉDIO do tronco na
+    repetição indica se o corpo inteiro subiu/desceu (pulo). Não dividir quadro a
+    quadro: o tamanho medido do tronco muda quando os braços sobem e inflava a medida.
     """
     idx = [J[j] for j in ("l_shoulder", "r_shoulder", "l_hip", "r_hip")]
     if min(pose.visibility[i] for i in idx) < min_visibility:
-        return math.nan
+        return math.nan, math.nan
     pts = pose.image_points
     mid_sh = (pts[J["l_shoulder"]] + pts[J["r_shoulder"]]) / 2
     mid_hip = (pts[J["l_hip"]] + pts[J["r_hip"]]) / 2
-    torso = float(np.linalg.norm(mid_sh - mid_hip))
-    return float(mid_sh[1] / torso) if torso > 1e-6 else math.nan
+    return float(mid_sh[1]), float(np.linalg.norm(mid_sh - mid_hip))
+
+
+def body_bounce(rows: list[dict[str, float]]) -> float:
+    """Deslocamento vertical dos ombros ÷ tamanho mediano do tronco na repetição."""
+    ys = np.array([r.get("body_y", math.nan) for r in rows], dtype=float)
+    torso = np.array([r.get("torso_px", math.nan) for r in rows], dtype=float)
+    ok = ~np.isnan(ys) & ~np.isnan(torso)
+    if ok.sum() < 3 or np.median(torso[ok]) <= 1e-6:
+        return math.nan
+    return float((ys[ok].max() - ys[ok].min()) / np.median(torso[ok]))
 
 
 @dataclass
@@ -60,6 +70,8 @@ class RepResult:
     """'regras', nome do modelo, ou '' quando não houve avaliação."""
     hints: list[str]
     feats: dict[str, float] = field(repr=False, default_factory=dict)
+    peak_t: float = math.nan
+    """Instante (s) do ponto extremo do movimento."""
 
 
 @dataclass
@@ -173,7 +185,7 @@ class ExerciseSession:
         trunk = ("l_shoulder", "r_shoulder", "l_hip", "r_hip")
         if max(pose.visibility[J[j]] for j in trunk) < self.min_visibility:
             row["trunk_tilt"] = math.nan
-        row["body_y"] = body_height(pose, self.min_visibility)
+        row["body_y"], row["torso_px"] = body_position(pose, self.min_visibility)
         return row
 
     def _trim_buffer(self, t: float) -> None:
@@ -195,6 +207,7 @@ class ExerciseSession:
                 confidence=None,
                 source="",
                 hints=[INCOMPLETE_MESSAGES.get(event.reason, "Repetição não contada")],
+                peak_t=event.peak_t,
             )
             self.reps.append(result)
             return result
@@ -203,7 +216,13 @@ class ExerciseSession:
         if invalid is not None:
             self.counter.count -= 1  # o contador já tinha contado
             result = RepResult(
-                index=0, counted=False, correct=None, confidence=None, source="", hints=[invalid]
+                index=0,
+                counted=False,
+                correct=None,
+                confidence=None,
+                source="",
+                hints=[invalid],
+                peak_t=event.peak_t,
             )
             self.reps.append(result)
             return result
@@ -231,6 +250,7 @@ class ExerciseSession:
             source=source,
             hints=hints,
             feats=feats,
+            peak_t=event.peak_t,
         )
         self.reps.append(result)
         return result
@@ -275,9 +295,8 @@ class ExerciseSession:
             if beyond:
                 return MSG_TOO_HIGH
         if cfg.max_body_bounce is not None:
-            ys = np.array([r.get("body_y", math.nan) for r in rows], dtype=float)
-            ys = ys[~np.isnan(ys)]
-            if ys.size >= 3 and ys.max() - ys.min() > cfg.max_body_bounce:
+            bounce = body_bounce(rows)
+            if not math.isnan(bounce) and bounce > cfg.max_body_bounce:
                 return MSG_BODY_MOVING
         return None
 

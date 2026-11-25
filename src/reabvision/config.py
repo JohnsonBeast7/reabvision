@@ -45,7 +45,7 @@ class ExerciseConfig:
     (ex.: curvada indo até o computador) e o quadro não conta. None = sem limite."""
     max_body_bounce: float | None = None
     """Deslocamento vertical máximo dos ombros na imagem durante a repetição, em
-    proporção do tamanho do tronco. Acima disso (pulos, deslocamentos) não conta."""
+    proporção do tamanho médio do tronco. Acima disso (pulos, deslocamentos) não conta."""
     max_extreme: float | None = None
     """Ângulo principal máximo para a repetição contar (ex.: braços acima da cabeça
     num polichinelo não contam como elevação até a altura dos ombros)."""

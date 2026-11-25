@@ -196,5 +196,5 @@ def test_max_extreme_invalidates_rep():
 def test_arm_raises_have_validity_limits():
     cfgs = load_exercises()
     for key in ("lateral_raise", "front_raise"):
-        assert cfgs[key].max_body_bounce == 0.2 and cfgs[key].max_extreme == 150
+        assert cfgs[key].max_body_bounce == 0.35 and cfgs[key].max_extreme == 125
     assert cfgs["squat"].max_body_bounce is None

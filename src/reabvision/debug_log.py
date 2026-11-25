@@ -36,7 +36,18 @@ class SessionLogger:
         self._reps = self.reps_path.open("w", encoding="utf-8")
         self._writer = csv.writer(self._frames)
         self._writer.writerow(
-            ["t", "valid", "primary", "count", "state", "fps", "message", *ANGLE_COLUMNS, "body_y"]
+            [
+                "t",
+                "valid",
+                "primary",
+                "count",
+                "state",
+                "fps",
+                "message",
+                *ANGLE_COLUMNS,
+                "body_y",
+                "torso_px",
+            ]
         )
 
     def frame(
@@ -61,6 +72,7 @@ class SessionLogger:
                 message or "",
                 *(_num(row.get(c)) for c in ANGLE_COLUMNS),
                 _num(row.get("body_y")),
+                _num(row.get("torso_px")),
             ]
         )
         self._frames.flush()
