@@ -164,13 +164,40 @@ def scenario_external(
     return rows
 
 
+def scenario_mixed(name: str, base: RepSet, target: RepSet) -> list[dict]:
+    """Treina com base + target menos uma pessoa do target; testa nessa pessoa."""
+    rows = []
+    for ex in EXERCISES:
+        tgt = target.subset(target.table["exercise"] == ex)
+        if len(tgt) == 0:
+            continue
+        src = base.subset(base.table["exercise"] == ex)
+        y = tgt.table["label"].to_numpy()
+        for kind in ("rf", "lstm"):
+            p = np.zeros(len(y))
+            for subj in tgt.table["subject_id"].unique():
+                m = (tgt.table["subject_id"] == subj).to_numpy()
+                train = _concat(src, tgt.subset(~m))
+                p[m] = _fit_predict(kind, train, _align(tgt.subset(m), train))
+            rows.append(
+                {
+                    "cenario": name,
+                    "exercicio": ex,
+                    "modelo": kind,
+                    "grupo": "todos",
+                    **metrics(y, p, THRESHOLD),
+                }
+            )
+    return rows
+
+
 def _concat(a: RepSet, b: RepSet) -> RepSet:
     table = pd.concat([a.table, b.table], ignore_index=True)
     feats = [c for c in a.feature_names if c in b.feature_names] or a.feature_names
     return RepSet(table, np.concatenate([a.sequences, b.sequences]), feats)
 
 
-def write_report(rows: list[dict], pending: list[str]) -> None:
+def write_report(rows: list[dict], pending: list[str], own: list[dict] | None = None) -> None:
     REPORTS.mkdir(exist_ok=True)
     df = pd.DataFrame(rows)
     (REPORTS / "results.json").write_text(json.dumps(rows, indent=2, ensure_ascii=False))
@@ -185,9 +212,10 @@ def write_report(rows: list[dict], pending: list[str]) -> None:
     titles = {
         "A": "Cenário A — UI-PRMD, deixando uma pessoa de fora",
         "B": "Cenário B — KIMORE (pessoas não vistas), saudáveis × pacientes",
-        "F": "Cenário F — REHAB24-6 (vídeo RGB, pessoas externas), por condição",
-        "C": "Cenário C — vídeos próprios (MediaPipe)",
-        "D": "Cenário D — vídeos próprios (YOLO-pose)",
+        "F": "Cenário F — treino só com Kinect, teste no REHAB24-6 (vídeo RGB): diferença "
+        "Kinect × webcam",
+        "F2": "Cenário F2 — treino com Kinect + REHAB24-6, testando cada pessoa do REHAB24-6 "
+        "fora do treino",
     }
     for code, title in titles.items():
         part = df[df["cenario"] == code] if len(df) else df
@@ -206,6 +234,29 @@ def write_report(rows: list[dict], pending: list[str]) -> None:
             lines.append(
                 f"| {r.exercicio} | {r.grupo} | {r.modelo.upper()} | {r.n} | "
                 f"{r.f1_macro:.3f} | {r.accuracy:.3f} |"
+            )
+        lines.append("")
+    lines += [
+        "## Cenários C e D — app completo nos vídeos próprios (C: MediaPipe, D: YOLO-pose)",
+        "",
+    ]
+    if not own:
+        lines += ["_Pendente: vídeos próprios ainda não anotados_", ""]
+    else:
+        lines += [
+            "Rótulos dos vídeos anotados por inspeção visual; erro de contagem por vídeo "
+            "(meta ≤ 1 por série de 10).",
+            "",
+            "| Exercício | Estimador | Avaliação | Vídeos | Erro de contagem (média / máx) "
+            "| Reps casadas | Acurácia | F1 macro |",
+            "|---|---|---|---|---|---|---|---|",
+        ]
+        for r in own:
+            f1 = "—" if r["f1_macro"] != r["f1_macro"] else f"{r['f1_macro']:.3f}"
+            lines.append(
+                f"| {r['exercicio']} | {r['estimador']} | {r['modelo']} | {r['videos']} | "
+                f"{r['erro_contagem_medio']:.2f} / {r['erro_contagem_max']} | "
+                f"{r['reps_casadas']} | {r['acuracia']:.3f} | {f1} |"
             )
         lines.append("")
     (REPORTS / "results.md").write_text("\n".join(lines), encoding="utf-8")
@@ -231,12 +282,17 @@ def main() -> None:
             rows += scenario_external(
                 "F", train_all, rehab, ("orientation", "lights_on", "extra_person")
             )
+            print("cenário F2 ...", flush=True)
+            rows += scenario_mixed("F2", train_all, rehab)
         else:
             pending.append("F: poses do REHAB24-6 ainda não extraídas")
     except FileNotFoundError:
         pending.append("F: REHAB24-6 não baixado")
-    pending += ["C: vídeos próprios ainda não gravados", "D: vídeos próprios ainda não gravados"]
-    write_report(rows, pending)
+    from reabvision.models.own_eval import evaluate_own
+
+    print("cenários C e D ...", flush=True)
+    own = evaluate_own("mediapipe") + evaluate_own("yolo")
+    write_report(rows, pending, own)
     print(f"ok: {REPORTS / 'results.md'}")
 
 
